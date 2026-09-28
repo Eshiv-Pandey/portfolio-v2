@@ -1,0 +1,803 @@
+@import url('https://fonts.googleapis.com/css2?family=Doto:wght@400;700;900&display=swap');
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+  --color-background: #ffffff;
+  --color-foreground: #000000;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #09090b;
+  --color-muted: #f4f4f5;
+  --color-muted-foreground: #71717a;
+  --color-border: #e4e4e7;
+  --color-accent: #f4f4f5;
+  --color-accent-foreground: #18181b;
+  --color-ring: #a1a1aa;
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-sans);
+  /* Enables `font-devanagari` on the micro-headings beside each section title. */
+  --font-devanagari: var(--font-noto-devanagari), var(--font-geist-sans);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-input: var(--input);
+  --color-destructive: var(--destructive);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+  --expo-out: linear(0 0%, 0.1684 2.66%, 0.3165 5.49%, 0.446 8.52%, 0.5581 11.78%, 0.6535 15.29%, 0.7341 19.11%, 0.8011 23.3%, 0.8557 27.93%, 0.8962 32.68%, 0.9283 38.01%, 0.9529 44.08%, 0.9711 51.14%, 0.9833 59.06%, 0.9915 68.74%, 1 100%);
+}
+
+:root {
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
+
+.dark {
+  --color-background: #000000;
+  --color-foreground: #fafafa;
+  --color-popover: #09090b;
+  --color-popover-foreground: #fafafa;
+  --color-muted: #27272a;
+  --color-muted-foreground: #a1a1aa;
+  --color-border: #27272a;
+  --color-accent: #27272a;
+  --color-accent-foreground: #fafafa;
+  --color-ring: #27272a;
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+/* ------------------------------------------------------------------
+   Desi accent system
+   Palette sampled from the reference art: ref1 (Mughal jaali florals),
+   ref2 (geometric tile grid), ref3 (poster cartouche), ref5 (truck art).
+   These sit *on top of* the monochrome blueprint base — they are used
+   at section seams, card covers and the footer band, never as page fill.
+   ------------------------------------------------------------------ */
+:root {
+  --desi-marigold: #e9a208;
+  --desi-indigo: #243a8e;
+  --desi-teal: #0e7c7b;
+  --desi-rose: #c2185b;
+  --desi-maroon: #b3202c;
+  --desi-cream: #f7f0e2;
+
+  /* Heatmap ramps — GitHub reads marigold, LeetCode reads teal */
+  --gh-0: #ebedf0;
+  --gh-1: #fae3ac;
+  --gh-2: #f5c65c;
+  --gh-3: #e9a208;
+  --gh-4: #a46c00;
+
+  --lc-0: #ebedf0;
+  --lc-1: #b3ddda;
+  --lc-2: #6dbfba;
+  --lc-3: #0e7c7b;
+  --lc-4: #095150;
+}
+
+.dark {
+  /* Slightly lifted + desaturated so the accents sit on black without glare */
+  --desi-marigold: #f0b53a;
+  --desi-indigo: #5b73d4;
+  --desi-teal: #2aa6a3;
+  --desi-rose: #e2547f;
+  --desi-maroon: #d95661;
+  --desi-cream: #e8ddc6;
+
+  --gh-0: #161b22;
+  --gh-1: #4a3708;
+  --gh-2: #8a6410;
+  --gh-3: #c98f14;
+  --gh-4: #f0b53a;
+
+  --lc-0: #161b22;
+  --lc-1: #0b3a39;
+  --lc-2: #13615f;
+  --lc-3: #1c8b88;
+  --lc-4: #2ec9c5;
+}
+
+/* ------------------------------------------------------------------
+   Footer poster (see src/components/Footer.tsx)
+
+   The footer is the one place on the site that stops being a blueprint
+   and becomes a printed object: a cream card mounted on a terracotta
+   board, ending in a skyline of Indian monuments. Because it is a
+   *thing* rather than a themed region, it keeps its own colour scale
+   instead of inheriting the zinc one — which is also why the monument
+   fills live here as tokens and not inside <MonumentSkyline>. Retune the
+   whole band from this block.
+
+   Dark mode does not invert the card to white-on-black; it dims the
+   board and the paper the way a warm print looks under low light, so
+   the skyline's reds and sands stay readable rather than going neon.
+   ------------------------------------------------------------------ */
+:root {
+  --fx-frame: #9c4a38;
+  --fx-frame-edge: #7d382a;
+  --fx-card: #fcf3ec;
+  --fx-ink: #3d2621;
+  --fx-muted: #8d6d63;
+  --fx-rule: #e6d3c8;
+  /* Filled buttons and the social circles. Its own pair rather than reusing
+     --fx-frame, because in dark mode the board goes almost black and a button
+     painted in it would vanish against the card. */
+  --fx-accent: #9c4a38;
+  --fx-accent-ink: #fdf6f1;
+
+  /* Skyline. Each monument gets a body and a shadow/detail tone; the
+     detail tone is also what every arch opening is filled with, so the
+     drawing reads as carved rather than outlined. */
+  --fx-sand: #e2b478;
+  --fx-sand-d: #bb884a;
+  --fx-stone: #ded4cd;
+  --fx-stone-d: #bcaea6;
+  --fx-white: #f0ece9;
+  --fx-red: #bf2f3a;
+  --fx-red-d: #96202a;
+  --fx-amber: #ee9f4e;
+  --fx-amber-d: #cf742a;
+  --fx-brown: #6d4634;
+  --fx-ground: #d8c2b3;
+}
+
+.dark {
+  --fx-frame: #2e1712;
+  --fx-frame-edge: #45241c;
+  --fx-card: #150f0d;
+  --fx-ink: #efe4dc;
+  --fx-muted: #a68b80;
+  --fx-rule: #39281f;
+  --fx-accent: #c4552f;
+  --fx-accent-ink: #1a0f0b;
+
+  --fx-sand: #a97c45;
+  --fx-sand-d: #7b5729;
+  --fx-stone: #6d645f;
+  --fx-stone-d: #4d4642;
+  --fx-white: #8d8580;
+  --fx-red: #932a33;
+  --fx-red-d: #6b1c23;
+  --fx-amber: #b06f2f;
+  --fx-amber-d: #83501d;
+  --fx-brown: #402a20;
+  --fx-ground: #2b1d17;
+}
+
+/* ------------------------------------------------------------------
+   Page frame
+   Every blueprint guide, the profile cell, the hero banner and the
+   content column key off these three values instead of the hard-coded
+   30% gutters the template shipped with. Change them here and the whole
+   grid moves together.
+
+   `--page-frame` is content + index rail. It tracks the viewport minus a
+   minimal 2rem margin until it hits the cap, so wide screens stop
+   growing the text rather than stop growing the margins.
+
+   `100vw` is exact here: scrollbars are hidden outright (see `html`
+   below), so there is no scrollbar width to subtract.
+   ------------------------------------------------------------------ */
+:root {
+  --page-frame: min(calc(100vw - 4rem), 1680px);
+
+  /* Mobile: no frame at all. The guides are `hidden md:block` and the
+     content column is full-bleed with its own px-4. */
+  --gutter: 0px;
+  /* Strip inside the right-hand frame reserved for <RightNavbar>. */
+  --rail: 0px;
+  /* Right inset = frame + rail. Kept as its own token so Tailwind
+     arbitrary values stay readable (`mr-[var(--gutter-r)]`). */
+  --gutter-r: calc(var(--gutter) + var(--rail));
+}
+
+@media (min-width: 768px) {
+  :root {
+    --gutter: calc((100vw - var(--page-frame)) / 2);
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --rail: 136px;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+html::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  html {
+    @apply font-sans;
+  }
+  ::view-transition-group(root) {
+    animation-timing-function: var(--expo-out);
+  }
+  ::view-transition-old(root),.dark::view-transition-old(root) {
+    animation: none;
+    animation-fill-mode: both;
+    z-index: -1;
+  }
+  ::view-transition-new(root) {
+    mask: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><path d="m20 0 20 35H0z" fill="white"/></svg>') center / 0 no-repeat;
+    animation: scale 0.7s;
+    animation-fill-mode: both;
+  }
+
+  @keyframes scale {
+    to {
+      mask-size: 300vmax;
+    }
+  }
+
+  @keyframes highlights-marquee {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  .highlights-track {
+    animation: highlights-marquee 28s linear infinite;
+  }
+  .highlights-track:hover {
+    animation-play-state: paused;
+  }
+
+}
+
+/* ------------------------------------------------------------------
+   Animation layer
+   Every motion below is decorative. The reduced-motion block at the
+   bottom of this file is the single off-switch for all of it.
+   ------------------------------------------------------------------ */
+
+/* Spider-Man pendulum on the hero banner. Rotation happens around the
+   web anchor point, which lives above the sprite (set via transform-origin
+   in the component) so it reads as swinging rather than spinning. */
+@keyframes spider-swing {
+  0%,
+  100% {
+    transform: rotate(-9deg);
+  }
+  50% {
+    transform: rotate(9deg);
+  }
+}
+
+.spider-swing {
+  animation: spider-swing 4.2s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  /* transform-origin is set inline by <SpiderSwing>, measured from where the
+     web actually leaves the top edge of the sprite. */
+}
+
+/* Slow horizontal crawl for the jaali / tile pattern seams. The strip is
+   rendered at 200% width and shifted by half, so the loop is seamless. */
+@keyframes jaali-drift {
+  from {
+    background-position: 0 center;
+  }
+  to {
+    background-position: var(--jaali-tile, 320px) center;
+  }
+}
+
+.jaali-drift {
+  animation: jaali-drift 40s linear infinite;
+}
+.jaali-drift-reverse {
+  animation: jaali-drift 40s linear infinite reverse;
+}
+
+/* Heatmap cells fade in on a diagonal. --cell-delay is set inline per cell
+   from its (week + day) position so the wave sweeps left-to-right. */
+@keyframes heat-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.heat-cell-in {
+  animation: heat-pop 0.32s ease-out both;
+  animation-delay: var(--cell-delay, 0ms);
+}
+
+/* A gentle heartbeat on the streak flame in the Activity stat strip — a small
+   nudge of gamification, never a distraction. */
+@keyframes streak-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.12);
+  }
+}
+
+.streak-pulse {
+  animation: streak-pulse 1.8s ease-in-out infinite;
+}
+
+/* Generic entrance used by section headers that aren't worth a JS
+   observer — the blur is what makes it feel expensive rather than cheap. */
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+}
+
+.reveal-up {
+  animation: reveal-up 0.6s var(--expo-out, ease-out) both;
+}
+
+/* Skeleton shimmer for the heatmaps / PR list before data lands. */
+@keyframes desi-shimmer {
+  from {
+    background-position: -200% 0;
+  }
+  to {
+    background-position: 200% 0;
+  }
+}
+
+.desi-shimmer {
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in srgb, var(--desi-marigold) 18%, transparent) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: desi-shimmer 1.6s linear infinite;
+}
+
+/* Pixel art must not be smoothed by the browser's image scaler. */
+.pixelated {
+  image-rendering: pixelated;
+}
+
+/* ------------------------------------------------------------------
+   Truck road band (see src/components/TruckRoad.tsx)
+   ------------------------------------------------------------------ */
+
+/* The drive. Applied to a full-width track with the truck pinned to its
+   left edge, so `100%` here resolves to the band's width and the travel
+   is exactly band + truck — no dead time with the truck parked
+   off-screen. `--truck-w` is set on the band by the component. */
+@keyframes truck-drive {
+  from {
+    transform: translateX(calc(-1 * var(--truck-w)));
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+.truck-drive {
+  animation: truck-drive var(--truck-duration, 26s) linear infinite;
+}
+
+/* Suspension. Separate element from the drive because both are transforms.
+   Scaled off `--truck-w` rather than fixed at 2px so a footer-sized truck
+   doesn't bounce like a jeep on a washboard. */
+@keyframes truck-jounce {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-0.45deg);
+  }
+  50% {
+    transform: translateY(calc(var(--truck-w) * -0.008)) rotate(0.45deg);
+  }
+}
+
+.truck-jounce {
+  animation: truck-jounce 0.62s ease-in-out infinite;
+}
+
+/* Exhaust. Each puff drifts back and up relative to the truck, which is
+   itself moving forward — so it reads as being left behind. --puff-delay
+   staggers them into a stream. The drift is a fraction of `--truck-w` for
+   the same reason the jounce is: the plume has to stay in proportion to
+   the lorry at every size it is drawn. */
+@keyframes smoke-puff {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.3);
+  }
+  14% {
+    opacity: 0.55;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(
+        calc(var(--truck-w) * -0.185),
+        calc(var(--truck-w) * -0.153)
+      )
+      scale(1.6);
+  }
+}
+
+.smoke-puff {
+  animation: smoke-puff 2.7s linear infinite;
+  animation-delay: var(--puff-delay, 0ms);
+}
+
+/* ------------------------------------------------------------------
+   Opening window page transition (see src/components/OpeningWindow.tsx)
+
+   Two doors, each half the viewport, meeting at the centre. Each one is
+   filled with the wall colour, carries the lace valance along its top
+   edge and half of the window at its seam edge, so together they
+   reassemble `opening_window.png`. They then swing towards the viewer on
+   their outer edges, like the shutters the artwork already shows open.
+
+   The window's mullion sits dead centre in the source (measured: its
+   bounding box centre is 1px off the artwork's), which is why the seam
+   can run straight down it — the wall appears to split along the window's
+   own joint rather than across it.
+
+   Every step here is a CSS animation rather than JS, for one reason: the
+   overlay ships inside the server-rendered HTML so that it covers the
+   page from the very first paint, before hydration. If opening it needed
+   JS, a slow hydration — or a JS error — would strand the visitor behind
+   a locked green wall. `forwards` on each animation means the doors open
+   and stay open no matter what JS does. The component's only jobs are to
+   unmount the overlay afterwards and to replay it on navigation.
+   ------------------------------------------------------------------ */
+
+.ow-shell {
+  /* Sampled from the artwork's wall, which is bit-exact across its whole
+     area — so this colour and the keyed-out crops join invisibly. */
+  --ow-wall: #5a934e;
+  --ow-valance-h: clamp(56px, 8.5vw, 136px);
+  /* Width-led on phones, height-led on desktops: the window neither
+     shrinks to a stamp on a 390px screen nor grows into the valance on a
+     short laptop. */
+  --ow-motif-w: min(72vw, 52vh, 620px);
+  /* From the 570x677 crop. A ratio, not a second clamp, so the two can't
+     drift apart. */
+  --ow-motif-h: calc(var(--ow-motif-w) * 677 / 570);
+  --ow-duration: 2.1s;
+
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  overflow: hidden;
+
+  /* Deep enough that a door sweeping towards the camera magnifies gently
+     instead of exploding: the free edge peaks at 50vw of depth, which at
+     1440px is a scale of about 1.4 against 2200px. A 1200px perspective
+     doubles it. */
+  perspective: 2200px;
+
+  animation: ow-shell var(--ow-duration) steps(1, end) forwards;
+}
+
+/* Held for the whole duration, then dropped — which also stops the
+   overlay swallowing clicks, so a failed JS unmount costs nothing. */
+@keyframes ow-shell {
+  from {
+    visibility: visible;
+  }
+  to {
+    visibility: hidden;
+  }
+}
+
+.ow-door {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  overflow: hidden;
+  background-color: var(--ow-wall);
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+  animation:
+    ow-dissolve var(--ow-duration) linear forwards,
+    var(--ow-swing) var(--ow-duration) cubic-bezier(0.32, 0.72, 0, 1) forwards;
+}
+
+.ow-door-l {
+  left: 0;
+  transform-origin: left center;
+  --ow-swing: ow-swing-l;
+}
+
+.ow-door-r {
+  right: 0;
+  transform-origin: right center;
+  --ow-swing: ow-swing-r;
+}
+
+/* The hold before the swing is built into the keyframes rather than an
+   animation-delay, because the easing then runs across 26%→100% and the
+   closed state reads as deliberate instead of as a dropped frame. */
+@keyframes ow-swing-l {
+  0%,
+  26% {
+    transform: rotateY(0deg);
+  }
+  100% {
+    transform: rotateY(-96deg);
+  }
+}
+
+@keyframes ow-swing-r {
+  0%,
+  26% {
+    transform: rotateY(0deg);
+  }
+  100% {
+    transform: rotateY(96deg);
+  }
+}
+
+/* Opaque almost to the end: a door that faded while it swung would show
+   the page through it the whole way. This only softens the last moment,
+   where the door is edge-on anyway. */
+@keyframes ow-dissolve {
+  0%,
+  74% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Lace along the top of each door. `right top` on the left door and
+   `left top` on the right one both put a tile boundary exactly on the
+   seam, so the pattern runs across the split unbroken. */
+.ow-valance {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--ow-valance-h);
+  background-image: url("/images/window-valance.webp");
+  background-repeat: repeat-x;
+  background-size: auto 100%;
+}
+
+.ow-door-l .ow-valance {
+  background-position: right top;
+}
+
+.ow-door-r .ow-valance {
+  background-position: left top;
+}
+
+/* Half a window each, hung off the seam edge so the two halves meet. */
+.ow-motif {
+  position: absolute;
+  top: 56%;
+  width: var(--ow-motif-w);
+  height: var(--ow-motif-h);
+  margin-top: calc(var(--ow-motif-h) / -2);
+  background-image: url("/images/window-motif.webp");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
+.ow-door-l .ow-motif {
+  right: calc(var(--ow-motif-w) / -2);
+}
+
+.ow-door-r .ow-motif {
+  left: calc(var(--ow-motif-w) / -2);
+}
+
+/* Light through the joint while the doors are shut. It also hides the
+   sub-pixel hairline where two 50% halves meet on an odd viewport width,
+   and is gone before either could separate. */
+.ow-seam {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  margin-left: -1px;
+  background-color: var(--desi-marigold);
+  box-shadow: 0 0 14px 3px rgb(233 162 8 / 0.5);
+  animation: ow-seam var(--ow-duration) ease-out forwards;
+}
+
+@keyframes ow-seam {
+  0%,
+  11% {
+    opacity: 1;
+  }
+  24%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* A full-screen flash of marigold and bright green is a lot at night.
+   Dimmed with a pseudo-element rather than a `filter` on the door, which
+   would risk the browser flattening it out of the 3D context. */
+.dark .ow-door::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: rgb(3 7 18 / 0.34);
+}
+
+/* ------------------------------------------------------------------
+   The single motion off-switch.
+   Covers the CSS animations above, the pre-existing marquee, and the
+   smooth-scroll. Framer Motion / GSAP components check the same media
+   query in JS (see src/hooks/use-reduced-motion.ts).
+   ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .spider-swing,
+  .jaali-drift,
+  .jaali-drift-reverse,
+  .heat-cell-in,
+  .streak-pulse,
+  .reveal-up,
+  .desi-shimmer,
+  .highlights-track,
+  .truck-drive,
+  .truck-jounce,
+  .smoke-puff {
+    animation: none !important;
+  }
+
+  /* Anything that animated in must still end up visible. */
+  .heat-cell-in,
+  .reveal-up {
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
+
+  /* A parked truck rather than one stuck mid-frame off-screen. */
+  .smoke-puff {
+    opacity: 0;
+  }
+
+  /* The page transition goes away entirely — a swinging full-screen wall is
+     exactly what this query is asking us not to do, and there is nothing
+     underneath it worth keeping. `display: none` rather than `animation:
+     none` because the latter would freeze the doors shut. It applies at
+     first paint, which is why this lives here and not in
+     use-reduced-motion.ts: that hook reports false during SSR by design,
+     so gating on it would flash the curtain before removing it. */
+  .ow-shell {
+    display: none !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
