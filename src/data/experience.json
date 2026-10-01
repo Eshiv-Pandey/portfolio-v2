@@ -1,0 +1,59 @@
+[
+  {
+    "title": "Open Source Contributor",
+    "role": "HAMi (CNCF) · Sugar Labs · webpack",
+    "dates": "Jul 2026 - Present",
+    "location": "Remote",
+    "mark": "OS",
+    "logos": [
+      { "src": "/images/hami.png", "alt": "HAMi" },
+      { "src": "/images/sugarlabs.png", "alt": "Sugar Labs" },
+      { "src": "/images/webpack.png", "alt": "webpack" }
+    ],
+    "accent": "teal",
+    "type": "Member",
+    "description": "HAMi: Became a project member of the CNCF sandbox project after 12+ merged pull requests across NVIDIA GPU scheduling, AWS Neuron device support, and the core scheduler\nScheduling: Worked on device plugin behaviour and scheduler policy: how heterogeneous accelerators get filtered, scored, and bound to pods on a Kubernetes cluster\nHAMi-core: Contributed to the in-container resource controller that enforces GPU memory and compute limits by intercepting CUDA calls, with no application or driver changes\nReviews: Reviewed 10+ pull requests from other contributors, covering scheduling correctness, device plugin edge cases, and test coverage\nSugar Labs: Landed 2 pull requests in Music Blocks, the browser-based visual programming environment for music and computation used in classrooms\nwebpack: Contributed to the module bundler that builds much of the web, working across its core packages\nOrgs: Active contributor across three organisations — HAMi, Sugar Labs, and webpack",
+    "tech": ["Go", "Kubernetes", "CUDA", "AWS Neuron", "Device Plugins", "JavaScript", "Git"],
+    "metrics": [
+      { "label": "Merged PRs", "value": "12+" },
+      { "label": "PRs Reviewed", "value": "10+" },
+      { "label": "HAMi Role", "value": "Member" },
+      { "label": "Orgs", "value": "3" }
+    ]
+  },
+  {
+    "title": "Venturelync",
+    "role": "Full Stack Developer Intern",
+    "dates": "Feb 2026 - May 2026",
+    "location": "Remote",
+    "mark": "VL",
+    "logos": [{ "src": "/images/venturelync.png", "alt": "Venturelync" }],
+    "accent": "marigold",
+    "type": "Founding Engineer",
+    "description": "Founding engineer: Built the platform from scratch as the first engineer on it, owning architecture, data model, and delivery end to end\nLync Terminal: Designed and shipped Lync Terminal from scratch: modular analytics, custom dashboards, and cached data retrieval so repeat queries stopped hitting the source every time\nIntegrations: Wired Razorpay, HubSpot, Zoho Books, and GitHub into event-driven workflows, giving the team data sync, payments visibility, and CRM automation without manual steps\nStack: Next.js on the front, Supabase for data and auth, FastAPI behind the analytics layer",
+    "tech": ["Next.js", "TypeScript", "Supabase", "FastAPI", "Python", "PostgreSQL", "Razorpay", "HubSpot"],
+    "metrics": [
+      { "label": "Engineer #", "value": "1" },
+      { "label": "Integrations", "value": "4" },
+      { "label": "Products Built", "value": "2" },
+      { "label": "Term", "value": "Feb - May" }
+    ]
+  },
+  {
+    "title": "PandainUniv",
+    "role": "Software Engineer Intern, Application Tracker",
+    "dates": "Jul 2025 - Oct 2025",
+    "location": "Remote",
+    "mark": "PU",
+    "accent": "indigo",
+    "type": "Stealth Startup",
+    "description": "Application Tracker: Built the tracker front to back: React.js on the client, a fully serverless AWS backend on AppSync, GraphQL, Lambda, and DynamoDB\nPerformance: Optimized DynamoDB schemas and GraphQL queries around the access patterns the product actually had, improving backend performance by 30%+\nDelivery: Set up CI/CD through AWS Amplify with real-time sync, so every push shipped and clients stayed consistent without a refresh",
+    "tech": ["React.js", "GraphQL", "AppSync", "AWS Lambda", "DynamoDB", "Amplify", "JavaScript"],
+    "metrics": [
+      { "label": "Backend Perf", "value": "+30%" },
+      { "label": "AWS Services", "value": "5" },
+      { "label": "Term", "value": "Jul - Oct" },
+      { "label": "Architecture", "value": "Serverless" }
+    ]
+  }
+]

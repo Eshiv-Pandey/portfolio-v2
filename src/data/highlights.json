@@ -1,0 +1,24 @@
+[
+  {
+    "id": "hami-member",
+    "title": "Project Member of HAMi, a CNCF Sandbox project",
+    "badge": "CNCF · HAMi",
+    "link": "https://github.com/Project-HAMi/HAMi/pulls?q=is%3Apr+author%3AEshiv-Pandey"
+  },
+  {
+    "id": "astraaya-winner",
+    "title": "Winner: Astraaya 1.0 IEEE AI-War Hackathon",
+    "badge": "1st Place"
+  },
+  {
+    "id": "gcloud-agentic-ai-day",
+    "title": "Finalist: Google Cloud Agentic AI Day 2025",
+    "badge": "Finalist"
+  },
+  {
+    "id": "sugarlabs-musicblocks",
+    "title": "Contributor to Sugar Labs Music Blocks",
+    "badge": "Sugar Labs",
+    "link": "https://github.com/sugarlabs/musicblocks/pulls?q=is%3Apr+author%3AEshiv-Pandey"
+  }
+]
