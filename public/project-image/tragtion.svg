@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 712 400" width="712" height="400" role="img" aria-label="A retrieval pipeline: source files, embedding, a vector lattice with retrieved points highlighted, and a persistent memory timeline">
+  <!-- Generated cover for tRAGtion. No screenshot yet, so the cover draws the
+       thing itself: codebase in, embeddings into a jaali-shaped vector lattice,
+       the retrieved handful lit in marigold, over a persistent memory timeline.
+
+       CANVAS 712x400 (16:9) — see the matching note in keyv-db.svg for why the
+       canvas is wider than the drawing. -->
+  <defs>
+    <pattern id="tiles" width="26" height="26" patternUnits="userSpaceOnUse">
+      <path d="M0 13h26M13 0v26" stroke="#0E7C7B" stroke-width="0.6" opacity="0.2"/>
+      <path d="M13 6 20 13 13 20 6 13Z" fill="none" stroke="#0E7C7B" stroke-width="0.6" opacity="0.22"/>
+    </pattern>
+    <marker id="tip" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 8 4 0 8Z" fill="#C2185B"/>
+    </marker>
+  </defs>
+
+  <rect width="712" height="400" fill="#F7F0E2"/>
+  <rect width="712" height="400" fill="url(#tiles)"/>
+
+  <!-- The drawing itself, centred in the wider canvas. See the note above. -->
+  <g transform="translate(56 0)">
+  <rect x="14" y="14" width="572" height="372" rx="6" fill="none" stroke="#243A8E" stroke-width="1.2" stroke-dasharray="1 5" stroke-linecap="round"/>
+
+  <text x="34" y="48" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11" font-weight="700" letter-spacing="3.2" fill="#B3202C">tRAGtion · RETRIEVAL MEMORY</text>
+
+  <!-- codebase -->
+  <text x="34" y="86" font-family="ui-sans-serif, system-ui, sans-serif" font-size="9" letter-spacing="1.6" fill="#243A8E">CODEBASE</text>
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="9" fill="#243A8E">
+    <g transform="translate(34 98)"><rect width="96" height="26" rx="4" fill="#FFFFFF" stroke="#243A8E" stroke-width="1.1"/><text x="10" y="17">src/db.ts</text></g>
+    <g transform="translate(34 132)"><rect width="96" height="26" rx="4" fill="#FFFFFF" stroke="#243A8E" stroke-width="1.1"/><text x="10" y="17">api/route.ts</text></g>
+    <g transform="translate(34 166)"><rect width="96" height="26" rx="4" fill="#FFFFFF" stroke="#243A8E" stroke-width="1.1"/><text x="10" y="17">schema.prisma</text></g>
+    <g transform="translate(34 200)"><rect width="96" height="26" rx="4" fill="#FFFFFF" stroke="#243A8E" stroke-width="1.1"/><text x="10" y="17">ADR-014.md</text></g>
+  </g>
+
+  <path d="M138 162 H172" stroke="#C2185B" stroke-width="1.3" marker-end="url(#tip)"/>
+
+  <!-- chunk + embed -->
+  <g transform="translate(180 128)">
+    <rect width="76" height="68" rx="5" fill="#0E7C7B"/>
+    <text x="38" y="28" text-anchor="middle" font-family="ui-sans-serif, system-ui, sans-serif" font-size="10" font-weight="700" fill="#F7F0E2">CHUNK</text>
+    <text x="38" y="46" text-anchor="middle" font-family="ui-sans-serif, system-ui, sans-serif" font-size="10" font-weight="700" fill="#F7F0E2">EMBED</text>
+    <g stroke="#F7F0E2" stroke-width="1" opacity="0.55">
+      <path d="M16 56h44M16 60h30"/>
+    </g>
+  </g>
+
+  <path d="M264 162 H296" stroke="#C2185B" stroke-width="1.3" marker-end="url(#tip)"/>
+
+  <!-- vector lattice: the retrieved points are the lit ones -->
+  <text x="304" y="86" font-family="ui-sans-serif, system-ui, sans-serif" font-size="9" letter-spacing="1.6" fill="#0E7C7B">VECTOR LATTICE</text>
+  <g fill="#0E7C7B" opacity="0.3">
+    <g>
+      <circle cx="308" cy="100" r="3"/><circle cx="336" cy="100" r="3"/><circle cx="364" cy="100" r="3"/><circle cx="392" cy="100" r="3"/><circle cx="420" cy="100" r="3"/><circle cx="448" cy="100" r="3"/>
+      <circle cx="308" cy="128" r="3"/><circle cx="336" cy="128" r="3"/><circle cx="364" cy="128" r="3"/><circle cx="392" cy="128" r="3"/><circle cx="420" cy="128" r="3"/><circle cx="448" cy="128" r="3"/>
+      <circle cx="308" cy="156" r="3"/><circle cx="336" cy="156" r="3"/><circle cx="364" cy="156" r="3"/><circle cx="392" cy="156" r="3"/><circle cx="420" cy="156" r="3"/><circle cx="448" cy="156" r="3"/>
+      <circle cx="308" cy="184" r="3"/><circle cx="336" cy="184" r="3"/><circle cx="364" cy="184" r="3"/><circle cx="392" cy="184" r="3"/><circle cx="420" cy="184" r="3"/><circle cx="448" cy="184" r="3"/>
+      <circle cx="308" cy="212" r="3"/><circle cx="336" cy="212" r="3"/><circle cx="364" cy="212" r="3"/><circle cx="392" cy="212" r="3"/><circle cx="420" cy="212" r="3"/><circle cx="448" cy="212" r="3"/>
+    </g>
+  </g>
+  <g stroke="#E9A208" stroke-width="1.1" fill="none" opacity="0.8">
+    <path d="M336 128 392 156 364 212 336 128"/>
+  </g>
+  <g fill="#E9A208">
+    <circle cx="336" cy="128" r="5"/><circle cx="392" cy="156" r="5"/><circle cx="364" cy="212" r="5"/>
+  </g>
+  <g fill="none" stroke="#E9A208" stroke-width="1" opacity="0.5">
+    <circle cx="336" cy="128" r="10"/><circle cx="392" cy="156" r="10"/><circle cx="364" cy="212" r="10"/>
+  </g>
+  <text x="378" y="244" text-anchor="middle" font-family="ui-sans-serif, system-ui, sans-serif" font-size="9" letter-spacing="1.4" fill="#E9A208">TOP-K RETRIEVED</text>
+
+  <path d="M464 162 H492" stroke="#C2185B" stroke-width="1.3" marker-end="url(#tip)"/>
+
+  <!-- grounded answer -->
+  <g transform="translate(498 122)">
+    <rect width="68" height="80" rx="5" fill="#243A8E"/>
+    <text x="34" y="24" text-anchor="middle" font-family="ui-sans-serif, system-ui, sans-serif" font-size="9" font-weight="700" letter-spacing="1" fill="#F7F0E2">ANSWER</text>
+    <g stroke="#F7F0E2" stroke-width="1.4" opacity="0.6" stroke-linecap="round">
+      <path d="M14 40h40M14 50h40M14 60h26"/>
+    </g>
+  </g>
+
+  <!-- persistent memory -->
+  <text x="34" y="298" font-family="ui-sans-serif, system-ui, sans-serif" font-size="10" font-weight="700" letter-spacing="2" fill="#B3202C">PERSISTENT MEMORY</text>
+  <path d="M34 326 H566" stroke="#243A8E" stroke-width="1.1" stroke-dasharray="1 5" stroke-linecap="round"/>
+  <g font-family="ui-sans-serif, system-ui, sans-serif" font-size="8.5" fill="#243A8E" text-anchor="middle">
+    <g fill="#C2185B"><circle cx="70" cy="326" r="4"/><circle cx="204" cy="326" r="4"/><circle cx="338" cy="326" r="4"/><circle cx="472" cy="326" r="4"/></g>
+    <text x="70" y="348" fill="#243A8E">architecture</text>
+    <text x="204" y="348" fill="#243A8E">decisions</text>
+    <text x="338" y="348" fill="#243A8E">conventions</text>
+    <text x="472" y="348" fill="#243A8E">dev flow</text>
+  </g>
+
+  <g font-family="ui-sans-serif, system-ui, sans-serif" font-size="9" letter-spacing="1.4" fill="#0E7C7B">
+    <text x="34" y="374">NEXT.JS</text>
+    <text x="120" y="374">TYPESCRIPT</text>
+    <text x="230" y="374">PRISMA</text>
+    <text x="310" y="374">POSTGRES</text>
+  </g>
+  </g>
+</svg>
