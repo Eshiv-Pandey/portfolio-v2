@@ -59,8 +59,9 @@ export function RightNavbar() {
       style={{ width: 'calc(100vw - var(--removed-body-scroll-bar-size, 0px))' }}
     >
       {/* The index lives in `--rail`, the strip the content column leaves
-          free inside the right-hand gutter (see globals.css). */}
-      <nav className={`absolute top-[22vh] right-(--gutter) max-w-(--rail) flex flex-col gap-4 mt-2 ${footerVisible ? "pointer-events-none" : "pointer-events-auto"}`}>
+          free inside the right-hand gutter (see globals.css). Pinned to the
+          home banner's 26vh bottom edge so it clears the banner clock. */}
+      <nav className={`absolute top-[26vh] right-(--gutter) max-w-(--rail) flex flex-col gap-4 mt-2 ${footerVisible ? "pointer-events-none" : "pointer-events-auto"}`}>
         <h3 className="text-[10px] font-bold tracking-[0.2em] text-zinc-400 dark:text-zinc-600 uppercase mb-1">Index</h3>
         {SECTIONS.map((link) => {
           const isActive = activeSection === link.id;

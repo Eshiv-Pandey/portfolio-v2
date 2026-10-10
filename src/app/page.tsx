@@ -15,59 +15,25 @@ import { ExperienceList } from "@/components/ExperienceList";
 import { Footer } from "@/components/Footer";
 import { HeroBanner } from "@/components/HeroBanner";
 import { Highlights } from "@/components/Highlights";
-import { Magnetic } from "@/components/Magnetic";
 import { OpenSourceContributions } from "@/components/OpenSourceContributions";
+import { ProfileFlip } from "@/components/ProfileFlip";
 import { ProjectsGrid } from "@/components/ProjectsGrid";
 import { Reveal } from "@/components/Reveal";
 import { RightNavbar } from "@/components/RightNavbar";
+import { TechStack } from "@/components/TechStack";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { IconGrid, type IconGridItem } from "@/components/ui/icon-set";
 import SocialHoverCard from "@/components/pixel-perfect/social-hover-card";
 import SoftPillButton from "@/components/pixel-perfect/soft-pill-button";
 import { getMediumPosts, MEDIUM_PROFILE_URL } from "@/lib/medium";
 import { RESUME_URL } from "@/lib/site";
+import { cn } from "@/lib/utils";
 
 const EMAIL = "eshivpandey18@gmail.com";
 const NAME = "Eshiv Pandey";
 
-/**
- * The stack from the résumé.
- *
- * `icon` is a simpleicons slug. It's optional because four of these have no
- * mark on the CDN — every AWS slug 404s, and so do `dynamodb` and `matplotlib`;
- * `SQL` isn't a product and has no logo at all. Those get the marigold lozenge
- * instead of a borrowed logo that would misattribute them.
- */
-const skills: { name: string; icon?: string }[] = [
-  { name: "JavaScript", icon: "javascript" },
-  { name: "TypeScript", icon: "typescript" },
-  { name: "Go", icon: "go" },
-  { name: "Python", icon: "python" },
-  { name: "C++", icon: "cplusplus" },
-  { name: "SQL" },
-  { name: "Node.js", icon: "nodedotjs" },
-  { name: "Express", icon: "express" },
-  { name: "GraphQL", icon: "graphql" },
-  { name: "Supabase", icon: "supabase" },
-  { name: "React", icon: "react" },
-  { name: "Next.js", icon: "nextdotjs" },
-  { name: "Tailwind", icon: "tailwindcss" },
-  { name: "EJS", icon: "ejs" },
-  { name: "AWS" },
-  { name: "Docker", icon: "docker" },
-  { name: "Kubernetes", icon: "kubernetes" },
-  { name: "Git", icon: "git" },
-  { name: "GitHub", icon: "github" },
-  { name: "PostgreSQL", icon: "postgresql" },
-  { name: "MongoDB", icon: "mongodb" },
-  { name: "DynamoDB" },
-  { name: "Redis", icon: "redis" },
-  { name: "TensorFlow", icon: "tensorflow" },
-  { name: "PyTorch", icon: "pytorch" },
-  { name: "scikit-learn", icon: "scikitlearn" },
-  { name: "Pandas", icon: "pandas" },
-  { name: "NumPy", icon: "numpy" },
-  { name: "Matplotlib" },
-];
+/** Shown bare under the name, the way the reference portfolio does it. */
+const AGE = 21;
 
 const socials: { name: string; href: string; Icon: IconType }[] = [
   { name: "GitHub", href: "https://github.com/Eshiv-Pandey", Icon: SiGithub },
@@ -128,32 +94,35 @@ function ViewAllRow(props: React.ComponentProps<typeof ViewAll>) {
   );
 }
 
-function SkillPill({ skill }: { skill: (typeof skills)[number] }) {
+/**
+ * The social links as a row of icon tiles (see components/ui/icon-set). Each
+ * tile keeps the original hover: the peek card from <SocialHoverCard> and a
+ * gentle icon-brighten, not the icon-set's default lift. Rendered in two places
+ * — the profile header's right column on wide screens, the content column on
+ * narrow ones — so it lives in one place.
+ */
+function SocialPills({ className = "" }: { className?: string }) {
+  const items: IconGridItem[] = socials.map(({ name, href, Icon }) => ({
+    id: name,
+    name,
+    href,
+    target: "_blank",
+    rel: "noopener noreferrer",
+    icon: (
+      <SocialHoverCard socialName={name}>
+        <span className="flex items-center justify-center opacity-70 transition-opacity duration-300 group-hover:opacity-100">
+          <Icon className="h-[18px] w-[18px]" />
+        </span>
+      </SocialHoverCard>
+    ),
+  }));
+
   return (
-    <div className="flex grow cursor-default items-center justify-center gap-2 rounded-[6px] border border-black/30 bg-zinc-50 px-3 py-1.5 transition-colors duration-200 hover:border-[var(--desi-marigold)]/60 hover:bg-zinc-100 dark:border-white/[0.15] dark:bg-[#0a0a0a] dark:hover:bg-[#121214]">
-      {skill.icon ? (
-        // eslint-disable-next-line @next/next/no-img-element -- one-pixel CDN
-        // mark, not worth a next/image round trip through the optimizer.
-        <img
-          src={`https://cdn.simpleicons.org/${skill.icon}/71717a`}
-          alt=""
-          width={14}
-          height={14}
-          loading="lazy"
-          decoding="async"
-          className="h-3.5 w-3.5 opacity-80"
-        />
-      ) : (
-        <span
-          aria-hidden="true"
-          className="size-[9px] shrink-0 rotate-45 rounded-[1px] opacity-70"
-          style={{ backgroundColor: "var(--desi-marigold)" }}
-        />
-      )}
-      <span className="text-[13px] font-medium text-zinc-600 dark:text-zinc-400">
-        {skill.name}
-      </span>
-    </div>
+    <IconGrid
+      items={items}
+      className={cn("w-fit gap-2", className)}
+      itemClassName="size-11 border-black/5 bg-zinc-50 transition-colors group-hover:border-black/10 dark:border-white/5 dark:bg-[#0c0c0e] dark:group-hover:border-white/10"
+    />
   );
 }
 
@@ -186,7 +155,7 @@ export default async function Home() {
         }}
       />
       <div
-        className="pointer-events-none absolute top-[22vh] right-0 left-0 h-0 border-b border-black/30 dark:border-white/[0.15]"
+        className="pointer-events-none absolute top-[26vh] right-0 left-0 h-0 border-b border-black/30 dark:border-white/[0.15]"
         style={{
           maskImage:
             "repeating-linear-gradient(to right, black 0, black 1px, transparent 1px, transparent 6px)",
@@ -195,7 +164,7 @@ export default async function Home() {
         }}
       />
       <div
-        className="pointer-events-none absolute top-[calc(22vh+112px)] right-0 left-0 h-0 border-b border-black/30 dark:border-white/[0.15]"
+        className="pointer-events-none absolute top-[calc(26vh+112px)] right-0 left-0 h-0 border-b border-black/30 dark:border-white/[0.15]"
         style={{
           maskImage:
             "repeating-linear-gradient(to right, black 0, black 1px, transparent 1px, transparent 6px)",
@@ -205,10 +174,10 @@ export default async function Home() {
       />
 
       {[
-        { top: "22vh", left: "var(--gutter)" },
-        { top: "22vh", right: "var(--gutter-r)" },
-        { top: "calc(22vh + 112px)", left: "var(--gutter)" },
-        { top: "calc(22vh + 112px)", right: "var(--gutter-r)" },
+        { top: "26vh", left: "var(--gutter)" },
+        { top: "26vh", right: "var(--gutter-r)" },
+        { top: "calc(26vh + 112px)", left: "var(--gutter)" },
+        { top: "calc(26vh + 112px)", right: "var(--gutter-r)" },
       ].map((pos, i) => (
         <div
           key={i}
@@ -223,23 +192,34 @@ export default async function Home() {
         />
       ))}
 
-      {/* Cell 1: the pixel sky and the swinging sprite. */}
-      <HeroBanner />
+      {/* Cell 1: the pixel sky and the swinging sprite. Taller than the shared
+          22vh default so the oversized profile photo can straddle its edge. */}
+      <HeroBanner height="26vh" />
 
-      {/* Cell 2: profile. 112px tall, sized to wrap the arch frame. */}
-      <div className="absolute top-[22vh] right-0 left-0 z-50 flex h-[112px] items-center px-4 md:right-(--gutter-r) md:left-(--gutter)">
+      {/* Cell 2: profile. The photo is deliberately taller than this 112px cell
+          and pulled upward, so its top half rises into the banner and its lower
+          half sits in the cell beside the name. */}
+      <div className="absolute top-[26vh] right-0 left-0 z-50 flex h-[112px] items-center px-4 md:right-(--gutter-r) md:left-(--gutter)">
         <div className="flex w-full items-center justify-between">
-          <div className="flex items-center gap-4 sm:gap-5">
+          <div className="flex items-center gap-4 sm:gap-6">
             <JaaliFrame
-              src="/images/Eshiv_Pandey.jpeg"
+              src="/images/pic1.jpeg"
               alt={NAME}
               preload
-              clipId="profile-arch"
-              sizes="(min-width: 640px) 68px, 56px"
-              className="h-[72px] w-[56px] sm:h-[86px] sm:w-[68px]"
-            />
+              shape="square"
+              sizes="(min-width: 640px) 144px, 112px"
+              className="-mt-8 size-28 sm:-mt-10 sm:size-36"
+            >
+              <ProfileFlip
+                images={[
+                  { src: "/images/pic1.jpeg", alt: NAME },
+                  { src: "/images/pic2.jpeg", alt: NAME },
+                ]}
+                sizes="(min-width: 640px) 144px, 112px"
+              />
+            </JaaliFrame>
 
-            <div className="flex flex-col justify-center pt-6">
+            <div className="flex flex-col justify-center">
               <h1 className="mb-0.5 text-[20px] leading-none font-bold tracking-tight text-zinc-800 [text-shadow:-1.5px_0_0_rgba(14,124,123,0.28),1.5px_0_0_rgba(233,162,8,0.38)] sm:text-[24px] dark:text-zinc-100 dark:[text-shadow:-1.5px_0_0_rgba(14,124,123,0.55),1.5px_0_0_rgba(233,162,8,0.6)]">
                 {/* Per-character entrance. Pure CSS so the name doesn't wait on
                     hydration; `.reveal-up` is disabled under reduced motion. */}
@@ -258,19 +238,29 @@ export default async function Home() {
               </h1>
               <p className="text-[13px] text-zinc-500 sm:text-[14px] dark:text-zinc-400">
                 New Delhi, India
+                <span aria-hidden="true" className="mx-1.5 text-zinc-300 dark:text-zinc-600">
+                  ·
+                </span>
+                <span className="sr-only">Age </span>
+                {AGE}
               </p>
             </div>
           </div>
 
-          <div className="flex h-20 items-start justify-end gap-2 py-1 sm:h-24 sm:gap-3">
-            <CommandMenu />
-            <ThemeToggle className="dark:text-zinc-400 hover:dark:text-zinc-300" />
+          <div className="flex flex-col items-end gap-2.5 py-1">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <CommandMenu />
+              <ThemeToggle className="dark:text-zinc-400 hover:dark:text-zinc-300" />
+            </div>
+            {/* The right-hand empty space under the toggle. Hidden on narrow
+                screens, where it falls back into the content column below. */}
+            <SocialPills className="ml-auto hidden justify-end sm:flex" />
           </div>
         </div>
       </div>
 
       {/* Flowing content */}
-      <div className="relative z-10 mr-0 ml-0 flex min-h-screen flex-col px-4 pt-[calc(22vh+112px)] pb-0 md:mr-(--gutter-r) md:ml-(--gutter)">
+      <div className="relative z-10 mr-0 ml-0 flex min-h-screen flex-col px-4 pt-[calc(26vh+112px)] pb-0 md:mr-(--gutter-r) md:ml-(--gutter)">
         <Reveal delay={0.05}>
           <p className="mt-4 max-w-[68ch] text-[14px] leading-relaxed text-zinc-600 sm:text-[15px] dark:text-zinc-300">
             Engineer. I build backends, infrastructure, and the occasional
@@ -330,18 +320,13 @@ export default async function Home() {
         </Reveal>
 
         <Reveal delay={0.18}>
-          {/* Both pills share one Magnetic so they drift toward the cursor as a
-              pair. Wrapping each in its own Magnetic made hovering one yank the
-              other sideways into it — the 8px gap is well inside the pull
-              radius, so the two catch zones overlapped. */}
           <div className="mt-4 flex flex-wrap items-center gap-2">
-            <Magnetic className="flex items-center gap-2">
-              <SoftPillButton
-                as="a"
-                href={`mailto:${EMAIL}`}
-                variant="primary"
-                className="px-3 py-1.5 !text-[12px]"
-              >
+            <SoftPillButton
+              as="a"
+              href={`mailto:${EMAIL}`}
+              variant="primary"
+              className="px-3 py-1.5 !text-[12px]"
+            >
                 <div className="flex items-center gap-1.5">
                   <svg
                     viewBox="0 0 24 24"
@@ -402,40 +387,13 @@ export default async function Home() {
                   Résumé
                 </div>
               </SoftPillButton>
-            </Magnetic>
           </div>
         </Reveal>
 
-        {/* Socials */}
-        <Reveal delay={0.24}>
-          <div id="contact" className="mt-6 scroll-mt-24">
-            <h2 className="mb-2 text-[14px] text-zinc-500">
-              Here are my{" "}
-              <span className="font-medium text-zinc-800 dark:text-zinc-200">
-                socials
-              </span>
-            </h2>
-            <div className="flex flex-wrap gap-1.5">
-              {socials.map(({ name, href, Icon }) => (
-                <SocialHoverCard key={name} socialName={name}>
-                  <SoftPillButton
-                    as="a"
-                    href={href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    variant="secondary"
-                    className="px-3 py-1.5 !text-[12px]"
-                  >
-                    <div className="flex items-center gap-1.5 opacity-70 transition-opacity duration-300 group-hover:opacity-100">
-                      <Icon className="h-3.5 w-3.5" />
-                      {name}
-                    </div>
-                  </SoftPillButton>
-                </SocialHoverCard>
-              ))}
-            </div>
-          </div>
-        </Reveal>
+        {/* Socials now live in the profile header's right column; on narrow
+            screens there's no room there, so they fall back to here. The grid
+            runs its own entrance, so no <Reveal> wrapper. */}
+        <SocialPills className="mt-6 flex sm:hidden" />
 
         {/* Experience */}
         <section
@@ -502,12 +460,8 @@ export default async function Home() {
             devanagari="कौशल"
             topRule
           />
-          <Reveal className="relative pt-6 pb-2">
-            <div className="flex w-full flex-wrap gap-2">
-              {skills.map((skill) => (
-                <SkillPill key={skill.name} skill={skill} />
-              ))}
-            </div>
+          <Reveal className="relative">
+            <TechStack />
           </Reveal>
         </section>
 

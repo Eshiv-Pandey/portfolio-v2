@@ -350,6 +350,30 @@ body {
     animation-play-state: paused;
   }
 
+  /* Tech-stack rows. Each track holds 3 copies of its chips, so shifting by
+     exactly one third lands on an identical arrangement and the loop is
+     seamless. Adjacent rows run in opposite directions. */
+  @keyframes tech-marquee-left {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-33.3333%); }
+  }
+
+  @keyframes tech-marquee-right {
+    0%   { transform: translateX(-33.3333%); }
+    100% { transform: translateX(0); }
+  }
+
+  .tech-track-left {
+    animation: tech-marquee-left 35s linear infinite;
+  }
+  .tech-track-right {
+    animation: tech-marquee-right 35s linear infinite;
+  }
+  .tech-track-left:hover,
+  .tech-track-right:hover {
+    animation-play-state: paused;
+  }
+
 }
 
 /* ------------------------------------------------------------------
@@ -761,6 +785,8 @@ body {
   .reveal-up,
   .desi-shimmer,
   .highlights-track,
+  .tech-track-left,
+  .tech-track-right,
   .truck-drive,
   .truck-jounce,
   .smoke-puff {

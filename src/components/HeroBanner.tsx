@@ -4,7 +4,12 @@ import { NebulaBackground } from "@/components/NebulaBackground";
 import { TruckRoad } from "@/components/TruckRoad";
 
 /**
- * The 22vh banner cell at the top of the blueprint grid.
+ * The banner cell at the top of the blueprint grid.
+ *
+ * Height defaults to 22vh — the value every page's grid lines are drawn at.
+ * The home page passes a taller value to give the oversized profile photo room
+ * to straddle the banner's bottom edge; callers that override it must move
+ * their own grid lines to match.
  *
  * The banner shares the footer's look: the same animated <NebulaBackground>
  * shader fills the cell (a warm cream/marigold/teal haze in light mode, a deep
@@ -13,9 +18,12 @@ import { TruckRoad } from "@/components/TruckRoad";
  * (<BannerParticles>). Edge fades blend the cell into the blueprint gutters and
  * the truck-art lorry drives along the bottom edge.
  */
-export function HeroBanner() {
+export function HeroBanner({ height = "22vh" }: { height?: string } = {}) {
   return (
-    <div className="pointer-events-auto absolute top-0 right-0 left-0 z-30 h-[22vh] overflow-hidden bg-white shadow-[0_4px_12px_rgba(2,6,23,0.04)] dark:bg-[#070b18] dark:shadow-[0_4px_12px_rgba(2,6,23,0.10)]">
+    <div
+      className="pointer-events-auto absolute top-0 right-0 left-0 z-30 overflow-hidden bg-white shadow-[0_4px_12px_rgba(2,6,23,0.04)] dark:bg-[#070b18] dark:shadow-[0_4px_12px_rgba(2,6,23,0.10)]"
+      style={{ height }}
+    >
       {/* Same nebula as the footer — theme-aware, so no dark-mode dim is needed
           the way the old video/image banner required. */}
       <NebulaBackground />
