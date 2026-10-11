@@ -10,7 +10,7 @@
 export const SITE_NAME = "Eshiv Pandey";
 
 export const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://eshivpandey18.vercel.app";
+  process.env.NEXT_PUBLIC_SITE_URL || "https://eshiv.in";
 
 export const TITLE_TEMPLATE = `%s · ${SITE_NAME}`;
 
