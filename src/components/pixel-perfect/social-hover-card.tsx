@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
  * The peek card behind each social pill.
  *
  * The template had two layouts — a flat one and a banner one — because two of
- * its profiles had cover images. None of these four do, so the banner branch is
+ * its profiles had cover images. These profiles use the flat layout, so the banner branch is
  * gone and every card renders flat.
  *
  * Stats are the numbers each platform actually shows on the profile, checked
@@ -74,6 +74,15 @@ const socialProfiles: Record<string, SocialProfile> = {
     accent: "var(--desi-rose)",
     stats: [],
   },
+  X: {
+    name: "Eshiv Pandey",
+    handle: "@Eshiv_Pandey",
+    avatar: AVATAR,
+    bio: "Find me on X.",
+    location: "New Delhi, India",
+    accent: "var(--desi-teal)",
+    stats: [],
+  },
 };
 
 interface SocialHoverCardProps {
@@ -101,7 +110,7 @@ export default function SocialHoverCard({
       closeDelay={120}
     >
       <HoverCard.Trigger asChild>
-        <span className="inline-block">{children}</span>
+        {children}
       </HoverCard.Trigger>
       <AnimatePresence>
         {isOpen && (
