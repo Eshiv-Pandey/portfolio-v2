@@ -2,6 +2,7 @@
   {
     "id": "hami-member",
     "title": "Project Member of HAMi, a CNCF Sandbox project",
+    "image": "/images/hami-community.webp",
     "badge": "CNCF · HAMi",
     "link": "https://github.com/Project-HAMi/HAMi/pulls?q=is%3Apr+author%3AEshiv-Pandey"
   },

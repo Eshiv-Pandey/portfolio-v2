@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 
 import { PosterCard } from "@/components/desi/PosterCard";
@@ -7,7 +8,7 @@ import { highlightsData, type Highlight } from "@/data/highlightsData";
 
 function HighlightCard({ item }: { item: Highlight }) {
   const inner = (
-    <div className="relative group w-[280px] sm:w-[300px] flex-shrink-0">
+    <div data-wild-scroll-target className="relative group w-[280px] sm:w-[300px] flex-shrink-0">
       {/* Outer subtle double-border frame matching portfolio design language */}
       <div className="absolute -inset-[4px] border border-black/5 dark:border-white/5 rounded-[10px] pointer-events-none transition-colors duration-300 group-hover:border-black/10 dark:group-hover:border-white/10" />
 
@@ -17,11 +18,12 @@ function HighlightCard({ item }: { item: Highlight }) {
             when there isn't. */}
         <div className="relative w-full aspect-video bg-zinc-100 dark:bg-[#0a0a0a] overflow-hidden">
           {item.image ? (
-            <img
+            <Image
               src={item.image}
               alt={item.title}
-              className="w-full h-full object-cover object-top grayscale group-hover:grayscale-0 transition-all duration-500 scale-[1.01] group-hover:scale-[1.03]"
-              loading="lazy"
+              fill
+              sizes="(min-width: 640px) 300px, 280px"
+              className="object-cover object-top transition-transform duration-500 group-hover:scale-[1.03]"
               draggable={false}
             />
           ) : (

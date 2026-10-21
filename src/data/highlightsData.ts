@@ -1,8 +1,8 @@
 /**
  * Highlights — the marquee strip under the projects grid.
  *
- * None of these four have a screenshot worth showing, so `image` is optional
- * and the card falls back to a generated <PosterCard> cover. Links point only
+ * `image` is optional; cards without one fall back to a generated
+ * <PosterCard> cover. Links point only
  * at pages that actually exist; the two hackathons have no public result page,
  * so they carry none rather than a guessed URL.
  *
