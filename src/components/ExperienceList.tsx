@@ -27,14 +27,14 @@ function LogoChip({
 }) {
   return (
     <span
-      className={`grid place-items-center overflow-hidden rounded-[8px] border border-black/10 bg-white shadow-sm shadow-black/15 dark:border-white/15 dark:shadow-black/50 ${className}`}
+      className={`grid shrink-0 place-items-center overflow-hidden rounded-[8px] border border-black/10 shadow-sm shadow-black/15 dark:border-white/15 dark:shadow-black/50 ${src.includes("venturelync") ? "bg-black" : "bg-white"} ${className}`}
     >
       <Image
         src={src}
         alt={alt}
         width={40}
         height={40}
-        className="size-[76%] object-contain"
+        className={`${src.includes("venturelync") ? "size-full" : "size-[86%]"} object-contain`}
       />
     </span>
   );

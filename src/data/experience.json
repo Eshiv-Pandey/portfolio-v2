@@ -45,6 +45,7 @@
     "dates": "Jul 2025 - Oct 2025",
     "location": "Remote",
     "mark": "PU",
+    "logos": [{ "src": "/images/pandainuniv.png", "alt": "PandaInUniv" }],
     "accent": "indigo",
     "type": "Stealth Startup",
     "description": "Application Tracker: Built the tracker front to back: React.js on the client, a fully serverless AWS backend on AppSync, GraphQL, Lambda, and DynamoDB\nPerformance: Optimized DynamoDB schemas and GraphQL queries around the access patterns the product actually had, improving backend performance by 30%+\nDelivery: Set up CI/CD through AWS Amplify with real-time sync, so every push shipped and clients stayed consistent without a refresh",
