@@ -1,9 +1,4 @@
 import Link from "next/link";
-// simple-icons dropped the LinkedIn mark over trademark, so that one glyph
-// comes from Font Awesome instead.
-import { FaLinkedinIn } from "react-icons/fa6";
-import { SiGithub, SiLeetcode, SiMedium } from "react-icons/si";
-import type { IconType } from "react-icons";
 
 import { ActivityHeatmaps } from "@/components/ActivityHeatmaps";
 import { BlogList } from "@/components/BlogList";
@@ -14,41 +9,19 @@ import { JaaliFrame } from "@/components/desi/JaaliFrame";
 import { ExperienceList } from "@/components/ExperienceList";
 import { Footer } from "@/components/Footer";
 import { HeroBanner } from "@/components/HeroBanner";
+import { ProfileFlip } from "@/components/ProfileFlip";
 import { Highlights } from "@/components/Highlights";
 import { OpenSourceContributions } from "@/components/OpenSourceContributions";
-import { ProfileFlip } from "@/components/ProfileFlip";
 import { ProjectsGrid } from "@/components/ProjectsGrid";
 import { Reveal } from "@/components/Reveal";
 import { RightNavbar } from "@/components/RightNavbar";
 import { TechStack } from "@/components/TechStack";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { IconGrid, type IconGridItem } from "@/components/ui/icon-set";
-import SocialHoverCard from "@/components/pixel-perfect/social-hover-card";
-import SoftPillButton from "@/components/pixel-perfect/soft-pill-button";
-import { getMediumPosts, MEDIUM_PROFILE_URL } from "@/lib/medium";
-import { RESUME_URL } from "@/lib/site";
-import { cn } from "@/lib/utils";
+import { SocialLinks } from "@/components/SocialLinks";
+import { HeroActions } from "@/components/HeroActions";
+import { getMediumPosts } from "@/lib/medium";
 
-const EMAIL = "eshivpandey18@gmail.com";
 const NAME = "Eshiv Pandey";
-
-/** Shown bare under the name, the way the reference portfolio does it. */
-const AGE = 21;
-
-const socials: { name: string; href: string; Icon: IconType }[] = [
-  { name: "GitHub", href: "https://github.com/Eshiv-Pandey", Icon: SiGithub },
-  {
-    name: "LinkedIn",
-    href: "https://www.linkedin.com/in/eshiv-pandey18/",
-    Icon: FaLinkedinIn,
-  },
-  { name: "Medium", href: MEDIUM_PROFILE_URL, Icon: SiMedium },
-  {
-    name: "LeetCode",
-    href: "https://leetcode.com/u/Eshiv_Pandey/",
-    Icon: SiLeetcode,
-  },
-];
 
 /** The pill that closes a section and links to its full page. */
 function ViewAll({
@@ -91,38 +64,6 @@ function ViewAllRow(props: React.ComponentProps<typeof ViewAll>) {
       <DashedRule position="bottom" nodes="edge" />
       <ViewAll {...props} />
     </div>
-  );
-}
-
-/**
- * The social links as a row of icon tiles (see components/ui/icon-set). Each
- * tile keeps the original hover: the peek card from <SocialHoverCard> and a
- * gentle icon-brighten, not the icon-set's default lift. Rendered in two places
- * — the profile header's right column on wide screens, the content column on
- * narrow ones — so it lives in one place.
- */
-function SocialPills({ className = "" }: { className?: string }) {
-  const items: IconGridItem[] = socials.map(({ name, href, Icon }) => ({
-    id: name,
-    name,
-    href,
-    target: "_blank",
-    rel: "noopener noreferrer",
-    icon: (
-      <SocialHoverCard socialName={name}>
-        <span className="flex items-center justify-center opacity-70 transition-opacity duration-300 group-hover:opacity-100">
-          <Icon className="h-[18px] w-[18px]" />
-        </span>
-      </SocialHoverCard>
-    ),
-  }));
-
-  return (
-    <IconGrid
-      items={items}
-      className={cn("w-fit gap-2", className)}
-      itemClassName="size-11 border-black/5 bg-zinc-50 transition-colors group-hover:border-black/10 dark:border-white/5 dark:bg-[#0c0c0e] dark:group-hover:border-white/10"
-    />
   );
 }
 
@@ -199,9 +140,9 @@ export default async function Home() {
       {/* Cell 2: profile. The photo is deliberately taller than this 112px cell
           and pulled upward, so its top half rises into the banner and its lower
           half sits in the cell beside the name. */}
-      <div className="absolute top-[26vh] right-0 left-0 z-50 flex h-[112px] items-center px-4 md:right-(--gutter-r) md:left-(--gutter)">
+      <div className="absolute top-[26vh] right-0 left-0 z-40 flex h-[112px] items-center px-4 md:right-(--gutter-r) md:left-(--gutter)">
         <div className="flex w-full items-center justify-between">
-          <div className="flex items-center gap-4 sm:gap-6">
+          <div className="flex min-w-0 items-center gap-4 sm:gap-6">
             <JaaliFrame
               src="/images/pic1.jpeg"
               alt={NAME}
@@ -219,181 +160,40 @@ export default async function Home() {
               />
             </JaaliFrame>
 
-            <div className="flex flex-col justify-center">
-              <h1 className="mb-0.5 text-[20px] leading-none font-bold tracking-tight text-zinc-800 [text-shadow:-1.5px_0_0_rgba(14,124,123,0.28),1.5px_0_0_rgba(233,162,8,0.38)] sm:text-[24px] dark:text-zinc-100 dark:[text-shadow:-1.5px_0_0_rgba(14,124,123,0.55),1.5px_0_0_rgba(233,162,8,0.6)]">
-                {/* Per-character entrance. Pure CSS so the name doesn't wait on
-                    hydration; `.reveal-up` is disabled under reduced motion. */}
-                <span className="sr-only">{NAME}</span>
-                <span aria-hidden="true">
-                  {NAME.split("").map((char, i) => (
-                    <span
-                      key={i}
-                      className="reveal-up inline-block"
-                      style={{ animationDelay: `${80 + i * 30}ms` }}
-                    >
-                      {char === " " ? " " : char}
-                    </span>
-                  ))}
-                </span>
+            <div className="flex min-w-0 flex-col justify-center">
+              <h1 className="mb-0.5 font-pixel text-[22px] leading-none font-bold text-zinc-800 [text-shadow:-1.5px_0_0_rgba(14,124,123,0.28),1.5px_0_0_rgba(233,162,8,0.38)] sm:text-[28px] dark:text-zinc-100 dark:[text-shadow:-1.5px_0_0_rgba(14,124,123,0.55),1.5px_0_0_rgba(233,162,8,0.6)]">
+                <span className="reveal-up inline-block">{NAME}</span>
               </h1>
-              <p className="text-[13px] text-zinc-500 sm:text-[14px] dark:text-zinc-400">
-                New Delhi, India
-                <span aria-hidden="true" className="mx-1.5 text-zinc-300 dark:text-zinc-600">
-                  ·
-                </span>
-                <span className="sr-only">Age </span>
-                {AGE}
-              </p>
+              <p className="mt-1 text-[13px] text-zinc-500 sm:text-[14px] dark:text-zinc-400">21, Engineer &amp; open-source contributor.</p>
             </div>
           </div>
 
-          <div className="flex flex-col items-end gap-2.5 py-1">
-            <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex shrink-0 flex-col items-end gap-2.5 py-1">
+            <div data-hero-controls className="absolute right-4 -top-20 flex items-center gap-2 sm:gap-3 min-[900px]:static">
               <CommandMenu />
               <ThemeToggle className="dark:text-zinc-400 hover:dark:text-zinc-300" />
             </div>
             {/* The right-hand empty space under the toggle. Hidden on narrow
                 screens, where it falls back into the content column below. */}
-            <SocialPills className="ml-auto hidden justify-end sm:flex" />
+            <SocialLinks className="ml-auto !hidden justify-end min-[900px]:!flex" />
           </div>
         </div>
       </div>
 
       {/* Flowing content */}
       <div className="relative z-10 mr-0 ml-0 flex min-h-screen flex-col px-4 pt-[calc(26vh+112px)] pb-0 md:mr-(--gutter-r) md:ml-(--gutter)">
+        <div className="grid gap-5 pt-1 min-[900px]:grid-cols-[minmax(0,1fr)_280px] min-[900px]:items-start">
         <Reveal delay={0.05}>
           <p className="mt-4 max-w-[68ch] text-[14px] leading-relaxed text-zinc-600 sm:text-[15px] dark:text-zinc-300">
-            Engineer. I build backends, infrastructure, and the occasional
-            database from scratch.
+            Building backends, infrastructure, and databases.
           </p>
         </Reveal>
 
-        <Reveal delay={0.12}>
-          <ul className="mt-4 max-w-[78ch] pl-4 text-[14px] leading-relaxed text-zinc-600 sm:text-[15px] dark:text-zinc-300">
-            <li className="flex gap-1.5">
-              <span>•</span>
-              <span>
-                B.Tech ECE at the{" "}
-                <span className="font-semibold text-zinc-900 dark:text-white">
-                  University of Delhi
-                </span>
-                , minor in AI &amp; ML.
-              </span>
-            </li>
-            <li className="flex gap-1.5">
-              <span>•</span>
-              <span>
-                Member of{" "}
-                <span className="font-semibold text-zinc-900 dark:text-white">
-                  HAMi
-                </span>{" "}
-                (CNCF): GPU scheduling for Kubernetes. Also contributing to
-                Sugar Labs&apos; Music Blocks.
-              </span>
-            </li>
-            <li className="flex gap-1.5">
-              <span>•</span>
-              <span>
-                Founding engineer at{" "}
-                <span className="font-semibold text-zinc-900 dark:text-white">
-                  Venturelync
-                </span>
-                , where I built the platform and{" "}
-                <span className="font-semibold text-zinc-900 dark:text-white">
-                  Lync Terminal
-                </span>{" "}
-                from scratch.
-              </span>
-            </li>
-            <li className="flex gap-1.5">
-              <span>•</span>
-              <span>
-                Currently writing{" "}
-                <span className="font-semibold text-zinc-900 dark:text-white">
-                  KeyV DB
-                </span>
-                , a C++17 storage engine with B+Tree indexing, a WAL, and
-                ARIES-style crash recovery.
-              </span>
-            </li>
-          </ul>
-        </Reveal>
-
-        <Reveal delay={0.18}>
-          <div className="mt-4 flex flex-wrap items-center gap-2">
-            <SoftPillButton
-              as="a"
-              href={`mailto:${EMAIL}`}
-              variant="primary"
-              className="px-3 py-1.5 !text-[12px]"
-            >
-                <div className="flex items-center gap-1.5">
-                  <svg
-                    viewBox="0 0 24 24"
-                    className="h-3.5 w-3.5"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                    <polyline points="22,6 12,13 2,6" />
-                  </svg>
-                  Send an email
-                </div>
-              </SoftPillButton>
-
-              <Link href="/contact">
-                <SoftPillButton
-                  as="span"
-                  variant="secondary"
-                  className="px-3 py-1.5 !text-[12px]"
-                >
-                  <div className="flex items-center gap-1.5 opacity-70 transition-opacity duration-300 group-hover:opacity-100">
-                    <svg
-                      viewBox="0 0 24 24"
-                      className="h-3.5 w-3.5"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
-                    </svg>
-                    Contact
-                  </div>
-                </SoftPillButton>
-              </Link>
-
-              <SoftPillButton
-                as="a"
-                href={RESUME_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                variant="secondary"
-                className="px-3 py-1.5 !text-[12px]"
-              >
-                <div className="flex items-center gap-1.5 opacity-70 transition-opacity duration-300 group-hover:opacity-100">
-                  <svg
-                    viewBox="0 0 24 24"
-                    className="h-3.5 w-3.5"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                    <polyline points="14 2 14 8 20 8" />
-                    <line x1="8" y1="13" x2="16" y2="13" />
-                    <line x1="8" y1="17" x2="16" y2="17" />
-                  </svg>
-                  Résumé
-                </div>
-              </SoftPillButton>
+          <div className="flex w-[280px] max-w-full flex-col gap-4 min-[900px]:items-end">
+            <SocialLinks className="min-[900px]:!hidden" />
+            <HeroActions />
           </div>
-        </Reveal>
-
-        {/* Socials now live in the profile header's right column; on narrow
-            screens there's no room there, so they fall back to here. The grid
-            runs its own entrance, so no <Reveal> wrapper. */}
-        <SocialPills className="mt-6 flex sm:hidden" />
+        </div>
 
         {/* Experience */}
         <section
@@ -477,7 +277,6 @@ export default async function Home() {
             aside={posts.length > 0 ? `${posts.length} on Medium` : undefined}
           />
           <BlogList posts={posts} />
-          <ViewAllRow href={MEDIUM_PROFILE_URL} external label="Read on Medium" />
         </section>
 
         {/* Highlights */}
