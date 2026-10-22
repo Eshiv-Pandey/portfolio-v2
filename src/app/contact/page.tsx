@@ -10,30 +10,8 @@ import { FlightButton } from "@/components/FlightButton";
 import DisplacementText from "@/components/DisplacementText";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import SocialHoverCard from "@/components/pixel-perfect/social-hover-card";
+import { SocialLinks } from "@/components/SocialLinks";
 import { BannerParticles } from "@/components/BannerParticles";
-// simple-icons dropped the LinkedIn mark over trademark, so that one glyph
-// comes from Font Awesome instead.
-import { FaLinkedinIn } from "react-icons/fa6";
-import { SiGithub, SiLeetcode, SiMedium } from "react-icons/si";
-import type { IconType } from "react-icons";
-
-/** The same four profiles as the home page, in the same order, so the pills
- *  here and the icon row there never disagree. */
-const socials: { name: string; href: string; Icon: IconType }[] = [
-  { name: "GitHub", href: "https://github.com/Eshiv-Pandey", Icon: SiGithub },
-  {
-    name: "LinkedIn",
-    href: "https://www.linkedin.com/in/eshiv-pandey18/",
-    Icon: FaLinkedinIn,
-  },
-  { name: "Medium", href: "https://medium.com/@eshivpandey", Icon: SiMedium },
-  {
-    name: "LeetCode",
-    href: "https://leetcode.com/u/Eshiv_Pandey/",
-    Icon: SiLeetcode,
-  },
-];
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -280,16 +258,7 @@ export default function ContactPage() {
         <div className="pt-2 -mt-4 pb-5 px-4 flex flex-col md:flex-row md:items-center justify-between gap-8 overflow-hidden">
           <div className="flex-shrink-0">
             <p className="text-[14px] text-zinc-500 mb-2">Find me on my <span className="font-medium text-zinc-800 dark:text-zinc-200">socials</span></p>
-            <div className="flex flex-wrap gap-1.5">
-              {socials.map(({ name, href, Icon }) => (
-                <SocialHoverCard key={name} socialName={name}>
-                  <a href={href} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 px-2.5 py-1.5 bg-zinc-100 dark:bg-zinc-800/40 hover:bg-zinc-200 dark:hover:bg-zinc-800 rounded-md text-[12px] font-medium text-zinc-600 dark:text-zinc-300 transition-colors border border-zinc-200/50 dark:border-zinc-700/50">
-                    <Icon className="w-3.5 h-3.5" />
-                    {name}
-                  </a>
-                </SocialHoverCard>
-              ))}
-            </div>
+            <SocialLinks />
           </div>
 
           {/* The displacement wordmark. No negative margin here: the parent
