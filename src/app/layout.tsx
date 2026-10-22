@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Noto_Sans_Devanagari, Pixelify_Sans } from "next/fon
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { OpeningWindow } from "@/components/OpeningWindow";
+import { CursorEffects } from "@/components/CursorEffects";
 import {
   SITE_DESCRIPTION,
   SITE_NAME,
@@ -104,6 +105,7 @@ export default function RootLayout({
         >
           {children}
         </ThemeProvider>
+        <CursorEffects />
         {/* Last in the body so it paints over everything without needing to
             out-stack each component's own z-index one at a time. */}
         <OpeningWindow />

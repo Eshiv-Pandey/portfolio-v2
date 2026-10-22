@@ -1,6 +1,9 @@
+"use client";
+
 import Image from "next/image";
 
 import { DashedRule } from "@/components/desi/section";
+import { toggleCursorMode } from "@/lib/cursor-mode";
 
 /**
  * A truck-art lorry ambling across a band, trailing exhaust.
@@ -43,6 +46,7 @@ export function TruckRoad({
   width = "clamp(132px, 16vw, 248px)",
   duration = "26s",
   road = false,
+  toggleCursor = false,
 }: {
   className?: string;
   /**
@@ -53,10 +57,12 @@ export function TruckRoad({
   duration?: string;
   /** Draw the dashed hairline for the truck to drive on. */
   road?: boolean;
+  /** Turn the moving lorry into the site's secret cursor-mode switch. */
+  toggleCursor?: boolean;
 }) {
   return (
     <div
-      aria-hidden="true"
+      aria-hidden={toggleCursor ? undefined : true}
       className={`pointer-events-none relative overflow-hidden ${className}`}
       style={
         {
@@ -73,6 +79,19 @@ export function TruckRoad({
         {/* The keyed crop is 570x328, so the aspect ratio sets the height and
             the caller only ever has to think about width. */}
         <div className="absolute bottom-0 left-0 aspect-570/328 w-(--truck-w)">
+          {toggleCursor && (
+            <button
+              type="button"
+              data-cursor-ignore
+              aria-label="Toggle cursor effect"
+              className="pointer-events-auto absolute inset-0 z-30 cursor-pointer rounded-sm border-0 bg-transparent p-0 outline-none focus-visible:ring-2 focus-visible:ring-[#d8ff00] focus-visible:ring-offset-2"
+              onClick={(event) => {
+                event.stopPropagation();
+                toggleCursorMode();
+              }}
+            />
+          )}
+
           {/* Contact shadow. Outside the jounce, so the truck moves against
               the ground rather than dragging it along. */}
           <span className="absolute inset-x-[7%] bottom-0 h-[3.5%] rounded-[50%] bg-black/25 blur-[3px] dark:bg-black/60" />

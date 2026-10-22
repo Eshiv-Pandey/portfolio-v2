@@ -2,6 +2,7 @@ import { BannerParticles } from "@/components/BannerParticles";
 import { CurrentTime } from "@/components/CurrentTime";
 import { NebulaBackground } from "@/components/NebulaBackground";
 import { TruckRoad } from "@/components/TruckRoad";
+import { WildPixelField } from "@/components/WildPixelField";
 
 /**
  * The banner cell at the top of the blueprint grid.
@@ -21,6 +22,7 @@ import { TruckRoad } from "@/components/TruckRoad";
 export function HeroBanner({ height = "22vh" }: { height?: string } = {}) {
   return (
     <div
+      data-cursor-hero
       className="pointer-events-auto absolute top-0 right-0 left-0 z-30 overflow-hidden bg-white shadow-[0_4px_12px_rgba(2,6,23,0.04)] dark:bg-[#070b18] dark:shadow-[0_4px_12px_rgba(2,6,23,0.10)]"
       style={{ height }}
     >
@@ -34,6 +36,10 @@ export function HeroBanner({ height = "22vh" }: { height?: string } = {}) {
           place a thick petal-fall reads as festive rather than busy. */}
       <BannerParticles count={90} />
 
+      <div className="pointer-events-none absolute inset-0 z-[6] isolate">
+        <WildPixelField ambient={false} />
+      </div>
+
       {/* Edge fades that blend the cell into the blueprint gutters. */}
       <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[5] h-10 bg-gradient-to-t from-white/90 to-transparent dark:from-black/60 dark:to-transparent" />
       <div className="pointer-events-none absolute top-0 bottom-0 left-0 z-20 w-8 bg-gradient-to-r from-white/90 to-transparent dark:from-black/50 dark:to-transparent" />
@@ -41,10 +47,10 @@ export function HeroBanner({ height = "22vh" }: { height?: string } = {}) {
 
       {/* The lorry, ambling across the bottom of the banner above the fade. */}
       <div className="absolute inset-0 z-10">
-        <TruckRoad className="size-full" width="8%" duration="18s" />
+        <TruckRoad className="size-full" width="clamp(76px, 8vw, 140px)" duration="18s" toggleCursor />
       </div>
 
-      <div className="pointer-events-auto absolute right-2 bottom-3 z-20">
+      <div data-hero-clock className="pointer-events-auto absolute right-2 bottom-3 z-20">
         <CurrentTime />
       </div>
     </div>

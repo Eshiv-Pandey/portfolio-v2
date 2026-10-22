@@ -520,6 +520,11 @@ body {
   animation: truck-drive var(--truck-duration, 26s) linear infinite;
 }
 
+.truck-drive:has(button:hover),
+.truck-drive:has(button:focus) {
+  animation-play-state: paused;
+}
+
 /* Suspension. Separate element from the drive because both are transforms.
    Scaled off `--truck-w` rather than fixed at 2px so a footer-sized truck
    doesn't bounce like a jeep on a washboard. */

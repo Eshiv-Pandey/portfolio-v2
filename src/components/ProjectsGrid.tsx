@@ -51,6 +51,7 @@ export const ProjectCard = ({
 
   return (
     <div
+      data-cursor-ignore
       className="flex flex-col group cursor-pointer"
       onClick={() => router.push(`/projects/${project.slug}`)}
       onMouseEnter={() => setShouldLoadHoverImage(true)}
@@ -59,6 +60,7 @@ export const ProjectCard = ({
     >
       {/* Outer Wrapper exactly like screenshot */}
       <motion.div
+        data-wild-scroll-target
         className="relative w-full aspect-[1.25] rounded-xl border border-black/5 dark:border-white/5 bg-zinc-50/80 dark:bg-[#09090b]/80 shadow-sm p-3.5 pb-0 flex flex-col overflow-hidden transition-all duration-300 hover:shadow-md hover:border-black/10 dark:hover:border-white/10 sm:aspect-[1.4] sm:p-4 sm:pb-0"
         initial="rest"
         whileHover="hover"
@@ -148,7 +150,7 @@ export const ProjectCard = ({
       </motion.div>
 
       {/* Content Area directly below the wrapper */}
-      <div className="mt-4 flex flex-col px-0.5">
+      <div data-wild-safe className="mt-4 flex flex-col px-0.5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0">
           <h3 className="text-[15px] font-bold text-zinc-900 dark:text-zinc-100 leading-tight">{project.title}</h3>
 
@@ -163,7 +165,7 @@ export const ProjectCard = ({
         </p>
 
         <div className="flex items-center justify-between gap-3 mt-3">
-          <div className="flex gap-2 flex-wrap">
+          <div data-project-tech className="flex items-center gap-2 flex-wrap">
             {project.tech.map((item) => {
               const key = typeof item === "string" ? item : item.label;
               const isIconItem = typeof item === "string";
@@ -173,7 +175,7 @@ export const ProjectCard = ({
               return (
                 <div
                   key={key}
-                  className="relative"
+                  className="relative flex items-center"
                   onMouseEnter={() => setHoveredTech(uniqueId)}
                   onMouseLeave={() => setHoveredTech(null)}
                 >
@@ -183,7 +185,7 @@ export const ProjectCard = ({
                       return <TechIcon className="w-4 h-4 md:w-3.5 md:h-3.5 text-zinc-400 dark:text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 transition-colors" />;
                     })()
                   ) : (
-                    <span className="px-1.5 py-0.5 rounded border border-black/30 dark:border-white/[0.15] text-[9px] text-zinc-500 dark:text-zinc-400 leading-none">
+                    <span className="inline-flex h-4 items-center px-1.5 rounded border border-black/30 dark:border-white/[0.15] text-[9px] text-zinc-500 dark:text-zinc-400 leading-none md:h-3.5">
                       {item.label}
                     </span>
                   )}
