@@ -1,10 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 
 import { SECTIONS } from "@/lib/sections";
+import { IndexDna } from "@/components/IndexDna";
 
 export function RightNavbar() {
   const pathname = usePathname();
@@ -53,6 +53,9 @@ export function RightNavbar() {
 
   return (
     <div
+      data-section-index
+      data-visible={!footerVisible}
+      inert={footerVisible}
       className={`fixed inset-0 z-50 hidden transition-opacity duration-500 lg:block ${
         footerVisible ? "pointer-events-none opacity-0" : "pointer-events-none opacity-100"
       }`}
@@ -61,14 +64,15 @@ export function RightNavbar() {
       {/* The index lives in `--rail`, the strip the content column leaves
           free inside the right-hand gutter (see globals.css). Pinned to the
           home banner's 26vh bottom edge so it clears the banner clock. */}
-      <nav className={`absolute top-[26vh] right-(--gutter) max-w-(--rail) flex flex-col gap-4 mt-2 ${footerVisible ? "pointer-events-none" : "pointer-events-auto"}`}>
+      <nav aria-label="Section index" className={`absolute top-[26vh] right-(--gutter) max-w-(--rail) flex flex-col gap-4 mt-2 ${footerVisible ? "pointer-events-none" : "pointer-events-auto"}`}>
         <h3 className="text-[10px] font-bold tracking-[0.2em] text-zinc-400 dark:text-zinc-600 uppercase mb-1">Index</h3>
         {SECTIONS.map((link) => {
           const isActive = activeSection === link.id;
           return (
-            <Link
+            <a
               key={link.id}
-              href={`#${link.id}`}
+              href={`/#${link.id}`}
+              aria-current={isActive ? "location" : undefined}
               className={`text-[12px] font-medium tracking-[0.05em] transition-all duration-300 ease-out flex items-center gap-3 ${isActive
                   ? "text-zinc-800 dark:text-zinc-200"
                   : "text-zinc-400 dark:text-zinc-600 hover:text-zinc-600 dark:hover:text-zinc-400"
@@ -79,9 +83,10 @@ export function RightNavbar() {
                 style={{ backgroundColor: isActive ? "var(--desi-marigold)" : "transparent" }}
               />
               {link.name}
-            </Link>
+            </a>
           );
         })}
+        <IndexDna paused={footerVisible} />
       </nav>
     </div>
   );

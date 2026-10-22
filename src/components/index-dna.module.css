@@ -1,0 +1,9 @@
+.dna {
+  display: block;
+  width: 116px;
+  height: clamp(100px, calc(74vh - 340px), 330px);
+  margin-top: 4px;
+  opacity: .55;
+  pointer-events: none;
+  mask-image: linear-gradient(transparent, #000 8%, #000 92%, transparent);
+}
