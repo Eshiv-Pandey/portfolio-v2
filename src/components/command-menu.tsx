@@ -2,6 +2,8 @@
 
 import * as React from "react"
 import { useTheme } from "next-themes"
+import { useRouter } from "next/navigation"
+import { flushSync } from "react-dom"
 import {
     LayoutDashboard,
     FileText,
@@ -19,10 +21,7 @@ import {
     Trophy,
     GitPullRequest,
 } from "lucide-react"
-// simple-icons dropped the LinkedIn mark over trademark, so that one glyph
-// comes from Font Awesome instead.
-import { FaLinkedinIn } from "react-icons/fa6"
-import { SiGithub, SiLeetcode, SiMedium } from "react-icons/si"
+import { SOCIALS } from "@/lib/socials"
 
 import {
     CommandDialog,
@@ -47,12 +46,7 @@ const SECTION_ICONS: Record<string, React.ComponentType<{ className?: string }>>
     highlights: Trophy,
 }
 
-const PROFILE_LINKS = [
-    { name: "GitHub", href: "https://github.com/Eshiv-Pandey", icon: SiGithub },
-    { name: "LeetCode", href: "https://leetcode.com/u/Eshiv_Pandey/", icon: SiLeetcode },
-    { name: "LinkedIn", href: "https://www.linkedin.com/in/eshiv-pandey18/", icon: FaLinkedinIn },
-    { name: "Medium", href: "https://medium.com/@eshivpandey", icon: SiMedium },
-]
+const PROFILE_LINKS = SOCIALS.map(({ name, href, Icon }) => ({ name, href, icon: Icon }))
 
 const SHORTCUT_CLASS =
     "font-mono text-[10px] bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded border border-zinc-200 dark:border-zinc-700"
@@ -60,6 +54,7 @@ const SHORTCUT_CLASS =
 export function CommandMenu() {
     const [open, setOpen] = React.useState(false)
     const { setTheme } = useTheme()
+    const router = useRouter()
 
     const openExternal = React.useCallback((url: string) => {
         const opened = window.open(url, "_blank", "noopener,noreferrer")
@@ -68,7 +63,7 @@ export function CommandMenu() {
 
     React.useEffect(() => {
         const down = (e: KeyboardEvent) => {
-            if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+            if (e.key.toLowerCase() === "k" && (e.metaKey || e.ctrlKey)) {
                 e.preventDefault()
                 setOpen((open) => !open)
             }
@@ -79,22 +74,33 @@ export function CommandMenu() {
     }, [])
 
     const runCommand = React.useCallback((command: () => unknown) => {
-        setOpen(false)
+        // Release the dialog's scroll lock before moving to a section.
+        flushSync(() => setOpen(false))
         command()
     }, [])
 
+    const navigateToSection = React.useCallback((id: string) => {
+        const section = document.getElementById(id)
+        if (window.location.pathname !== "/" || !section) {
+            router.push(`/#${id}`)
+            return
+        }
+        window.history.pushState(null, "", `#${id}`)
+        section.scrollIntoView({
+            behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth",
+            block: "start",
+        })
+    }, [router])
+
     React.useEffect(() => {
         const down = (e: KeyboardEvent) => {
-            const target = e.target as HTMLElement;
+            const target = e.target;
             const isTypingField =
-                target.isContentEditable ||
-                target.tagName === 'INPUT' ||
-                target.tagName === 'TEXTAREA' ||
-                target.tagName === 'SELECT'
+                target instanceof HTMLElement &&
+                (target.isContentEditable || !!target.closest('input, textarea, select, [role="textbox"]'))
 
-            if (!open) {
-                return
-            }
+            if (e.defaultPrevented || e.repeat || e.isComposing || e.ctrlKey || e.metaKey || e.altKey) return
+            if (isTypingField && !open) return
 
             // When the command palette is open, we still want shortcuts to work
             // even if the search input is focused.
@@ -105,7 +111,7 @@ export function CommandMenu() {
                 const section = SECTIONS.find((s) => s.key.toLowerCase() === key)
                 if (section) {
                     e.preventDefault()
-                    runCommand(() => { window.location.hash = `#${section.id}` })
+                    runCommand(() => navigateToSection(section.id))
                     return
                 }
 
@@ -134,11 +140,14 @@ export function CommandMenu() {
 
         document.addEventListener("keydown", down)
         return () => document.removeEventListener("keydown", down)
-    }, [open, openExternal, runCommand, setTheme])
+    }, [open, navigateToSection, runCommand, setTheme])
 
     return (
         <>
             <button 
+                type="button"
+                aria-label="Open navigation menu"
+                aria-keyshortcuts="Control+K Meta+K"
                 onClick={() => setOpen(true)}
                 className="relative group cursor-pointer transition-all duration-300 active:scale-95"
             >
@@ -174,7 +183,7 @@ export function CommandMenu() {
                             return (
                                 <CommandItem
                                     key={section.id}
-                                    onSelect={() => runCommand(() => { window.location.hash = `#${section.id}` })}
+                                    onSelect={() => runCommand(() => navigateToSection(section.id))}
                                     className="rounded-lg py-3 cursor-pointer"
                                 >
                                     <Icon className="mr-2 h-4 w-4 text-zinc-500" />
