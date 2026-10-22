@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 interface CachedJsonState<T> {
   data: T | null;
@@ -29,12 +29,8 @@ export function useCachedJson<T>(
     loading: true,
     error: null,
   });
-  const startedRef = useRef(false);
 
   useEffect(() => {
-    if (startedRef.current) return;
-    startedRef.current = true;
-
     const storageKey = `${cacheKey}:${version}`;
     let cancelled = false;
 
