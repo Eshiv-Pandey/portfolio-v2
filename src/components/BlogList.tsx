@@ -1,130 +1,122 @@
-import Link from "next/link";
-import { ArrowUpRight, Calendar, Clock } from "lucide-react";
+"use client";
+
+import { useRef, useState } from "react";
+import type { CSSProperties, KeyboardEvent } from "react";
+import Image from "next/image";
+import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
 
 import type { MediumPost } from "@/lib/medium";
 import { MEDIUM_PROFILE_URL } from "@/lib/medium";
+import styles from "./reading-folder.module.css";
 
-/**
- * The writing list, fed by the Medium RSS feed rather than a hardcoded array.
- *
- * Layout is the template's, with two changes: posts are always external (they
- * live on Medium, there are no local article pages), and the clap count — which
- * the feed doesn't carry — is replaced by reading time.
- */
-
-/** Fixed locale + timezone so the server and client agree on the string. */
 const DATE_FORMAT = new Intl.DateTimeFormat("en-GB", {
-  day: "numeric",
-  month: "short",
-  year: "numeric",
-  timeZone: "UTC",
+  day: "numeric", month: "short", year: "numeric", timeZone: "UTC",
 });
+const TAB_COLORS = ["#e7a0ab", "#f4e9d1", "#b2d4c6", "#f1cc64"];
+const fileNumber = (index: number) => String(index + 1).padStart(2, "0");
 
-const DASH =
-  "repeating-linear-gradient(to right, black 0, black 1px, transparent 1px, transparent 6px)";
-
+/** An open, tabbed document folder, populated by the server's Medium feed. */
 export function BlogList({ posts }: { posts: MediumPost[] }) {
-  if (posts.length === 0) {
-    return (
-      <div className="relative -mx-4 px-4 py-8">
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute right-[-100vw] bottom-0 left-[-100vw] z-10 h-0 border-b border-black/30 dark:border-white/[0.15]"
-          style={{ maskImage: DASH, WebkitMaskImage: DASH }}
-        />
-        <p className="text-center text-[13px] text-zinc-500 dark:text-zinc-400">
-          Posts live on{" "}
-          <a
-            href={MEDIUM_PROFILE_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-medium text-zinc-800 underline underline-offset-2 dark:text-zinc-200"
-          >
-            Medium
-          </a>
-          .
-        </p>
-      </div>
-    );
+  const [selectedLink, setSelectedLink] = useState(posts[0]?.link ?? "");
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const foundIndex = posts.findIndex((post) => post.link === selectedLink);
+  const activeIndex = Math.max(0, foundIndex);
+  const post = posts[activeIndex];
+
+  function selectTab(index: number, focus = false) {
+    setSelectedLink(posts[index].link);
+    if (focus) tabRefs.current[index]?.focus();
+  }
+
+  function navigateTabs(event: KeyboardEvent<HTMLButtonElement>, index: number) {
+    let next = index;
+    if (event.key === "ArrowDown" || event.key === "ArrowRight") next = (index + 1) % posts.length;
+    else if (event.key === "ArrowUp" || event.key === "ArrowLeft") next = (index - 1 + posts.length) % posts.length;
+    else if (event.key === "Home") next = 0;
+    else if (event.key === "End") next = posts.length - 1;
+    else return;
+    event.preventDefault();
+    selectTab(next, true);
   }
 
   return (
-    <div className="block">
-      {posts.map((post, idx) => {
-        const isLast = idx === posts.length - 1;
-
-        return (
-          <Link
-            href={post.link}
-            target="_blank"
-            rel="noopener noreferrer"
-            key={post.link}
-            className="group relative -mx-4 block cursor-pointer px-4 py-4 transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-900/20"
-          >
-            <div
-              aria-hidden="true"
-              className={`pointer-events-none absolute bottom-0 z-10 h-0 border-b border-black/30 dark:border-white/[0.15] ${
-                isLast ? "right-[-100vw] left-[-100vw]" : "right-0 left-0"
-              }`}
-              style={{ maskImage: DASH, WebkitMaskImage: DASH }}
-            />
-            {isLast && (
-              <>
-                <div className="pointer-events-none absolute bottom-0 left-0 z-20 h-[2px] w-[2px] -translate-x-1/2 translate-y-1/2 bg-black/40 dark:bg-white/[0.25]" />
-                <div className="pointer-events-none absolute right-0 bottom-0 z-20 h-[2px] w-[2px] translate-x-1/2 translate-y-1/2 bg-black/40 dark:bg-white/[0.25]" />
-              </>
-            )}
-
-            <div className="flex w-full items-start justify-between sm:items-center">
-              <div className="flex flex-col gap-2.5">
-                <h3 className="pr-6 text-[14px] font-bold text-zinc-900 transition-colors group-hover:text-[var(--desi-rose)] md:text-[15px] dark:text-zinc-100">
-                  {post.title}
-                </h3>
-
-                {post.description && (
-                  <p className="max-w-[62ch] pr-6 text-[12.5px] leading-relaxed text-zinc-500 dark:text-zinc-400">
-                    {post.description}
-                  </p>
-                )}
-
-                <div className="flex flex-wrap items-center gap-4 text-[12px] text-zinc-500 dark:text-zinc-400">
-                  <div className="flex items-center gap-1.5">
-                    <Calendar className="h-3.5 w-3.5" />
-                    <time dateTime={post.date}>
-                      {DATE_FORMAT.format(new Date(post.date))}
-                    </time>
-                  </div>
-
-                  <div className="flex items-center gap-1.5 font-medium text-[var(--desi-teal)]">
-                    <Clock className="h-3.5 w-3.5" />
-                    <span>{post.readingTime}</span>
-                  </div>
-
-                  {post.tags.length > 0 && (
-                    <>
-                      <div className="hidden h-3 w-[1px] bg-zinc-300 sm:block dark:bg-zinc-700" />
-                      <div className="flex flex-wrap items-center gap-2">
-                        {post.tags.slice(0, 4).map((tag) => (
-                          <span
-                            key={tag}
-                            className="rounded-[4px] border border-black/30 bg-white/50 px-2 py-0.5 text-[11px] text-zinc-600 dark:border-white/[0.15] dark:bg-black/20 dark:text-zinc-400"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    </>
-                  )}
-                </div>
-              </div>
-
-              <div className="ml-4 flex-shrink-0 text-zinc-400 transition-colors group-hover:text-zinc-900 dark:text-zinc-500 dark:group-hover:text-zinc-100">
-                <ArrowUpRight className="h-4 w-4" />
+    <div className={styles.reading}>
+      <div className={styles.folder}>
+        <span className={styles.folderLabel}>Field notes</span>
+        <div className={styles.spread}>
+          <aside className={styles.leftPage}>
+            <div className={styles.indexPaper}>
+              <h3 className={styles.indexTitle}>Notes &amp; ideas.</h3>
+              <div className={styles.contents}>
+                {posts.map((item, index) => (
+                  <button key={item.link} type="button" onClick={() => selectTab(index)} aria-pressed={index === activeIndex} className={styles.contentsItem}>
+                    <span className={styles.itemNumber}>{fileNumber(index)}</span>
+                    <span>{item.title}</span>
+                    <ArrowUpRight aria-hidden="true" size={14} />
+                  </button>
+                ))}
+                {posts.length === 0 && <p className={styles.indexIntro}>Browse the complete collection on Medium.</p>}
               </div>
             </div>
-          </Link>
-        );
-      })}
+            <a className={styles.note} href={MEDIUM_PROFILE_URL} target="_blank" rel="noopener noreferrer">
+              <span className={styles.paperclip} aria-hidden="true" />
+              <span className={styles.signature}>Eshiv Pandey</span>
+              <span>On Medium <ArrowUpRight aria-hidden="true" size={12} /></span>
+            </a>
+          </aside>
+
+          <div className={styles.documentArea}>
+            <div className={styles.backSheet} aria-hidden="true" />
+            <div className={styles.tabs} role="tablist" aria-label="Medium articles" aria-orientation="vertical">
+              {posts.map((item, index) => (
+                <button
+                  key={item.link}
+                  ref={(element) => { tabRefs.current[index] = element; }}
+                  type="button" role="tab" id={`reading-tab-${index}`} aria-controls="reading-document"
+                  aria-selected={activeIndex === index} aria-label={`File ${fileNumber(index)}: ${item.title}`}
+                  tabIndex={activeIndex === index ? 0 : -1}
+                  onClick={() => selectTab(index)} onKeyDown={(event) => navigateTabs(event, index)}
+                  className={styles.tab} style={{ "--tab-color": TAB_COLORS[index % TAB_COLORS.length] } as CSSProperties}
+                >
+                  <span>{fileNumber(index)}</span>
+                </button>
+              ))}
+            </div>
+            <article id="reading-document" role={post ? "tabpanel" : undefined} aria-labelledby={post ? `reading-tab-${activeIndex}` : undefined} tabIndex={0} className={styles.document}>
+              <div className={styles.holes} aria-hidden="true"><i /><i /><i /><i /><i /></div>
+              <div key={post?.link ?? "empty"} className={styles.documentContent}>
+                {post ? (
+                  <>
+                    <div className={styles.byline}><time dateTime={post.date}>{DATE_FORMAT.format(new Date(post.date))}</time><span>{post.readingTime}</span></div>
+                    <h3 className={styles.documentTitle}>{post.title}</h3>
+                    <div className={styles.excerpt}>
+                      <p>{post.description}</p>
+                    </div>
+                    {post.image && <div className={styles.imageFrame}><Image src={post.image} alt={`Illustration from ${post.title}`} fill sizes="(max-width: 600px) 75vw, (max-width: 1200px) 40vw, 480px" className={styles.postImage} /></div>}
+                    <div className={styles.documentFooter}>
+                      <a href={post.link} target="_blank" rel="noopener noreferrer" className={styles.readLink}>Read on Medium <ArrowUpRight aria-hidden="true" size={16} /></a>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <h3 className={styles.documentTitle}>The notes<br />live on Medium.</h3>
+                    <p className={styles.emptyText}>The articles couldn&apos;t be loaded right now. You can still read them in my Medium archive.</p>
+                    <a href={MEDIUM_PROFILE_URL} target="_blank" rel="noopener noreferrer" className={styles.readLink}>Visit my Medium <ArrowUpRight aria-hidden="true" size={16} /></a>
+                  </>
+                )}
+                <div className={styles.bottomMarks} aria-hidden="true"><span className={styles.stamp}>✦</span></div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+      {posts.length > 0 && <div className={styles.pagination}>
+        <p aria-live="polite">{fileNumber(activeIndex)} / {fileNumber(posts.length - 1)}</p>
+        <div>
+          <button type="button" aria-label="Previous article" disabled={activeIndex === 0} onClick={() => selectTab(activeIndex - 1)}><ChevronLeft aria-hidden="true" size={16} /></button>
+          <button type="button" aria-label="Next article" disabled={activeIndex === posts.length - 1} onClick={() => selectTab(activeIndex + 1)}><ChevronRight aria-hidden="true" size={16} /></button>
+        </div>
+      </div>}
     </div>
   );
 }

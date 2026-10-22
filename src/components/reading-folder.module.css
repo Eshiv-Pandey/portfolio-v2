@@ -1,0 +1,102 @@
+.reading { padding: 38px 0 14px; max-width: 1120px; width: 100%; margin: 0 auto; }
+.pagination { display: flex; justify-content: space-between; align-items: center; gap: 12px; color: #71717a; font-size: 11px; }
+:global(.dark) .pagination { color: #a1a1aa; }
+.folder { position: relative; padding: 20px 18px 22px; border-radius: 3px 7px 7px 3px; background: linear-gradient(115deg, #f39a3a, #df7d25 35%, #bc511f); box-shadow: inset 0 1px 1px #ffd49e, 0 12px 28px rgb(0 0 0 / 14%); }
+.folder::before { content: ""; position: absolute; top: -17px; left: 0; width: 185px; height: 24px; border-radius: 7px 20px 0 0; background: #f39a3a; box-shadow: inset 0 1px 1px #ffd49e; }
+.folderLabel { position: absolute; top: -14px; left: 15px; color: #512607; font: 13px var(--font-pixelify), monospace; }
+.spread { display: grid; grid-template-columns: .72fr 1fr; gap: 22px; }
+.leftPage { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; }
+.indexPaper, .document, .note { background-image: radial-gradient(rgb(72 44 28 / 9%) .5px, transparent .6px); background-size: 4px 4px; color: #302f29; }
+.indexPaper { position: relative; width: 100%; padding: 20px 20px 18px; background-color: #e6a5af; transform: rotate(-1deg); box-shadow: 3px 4px 0 rgb(89 39 12 / 24%), 0 3px 6px rgb(0 0 0 / 16%); }
+.indexTitle { margin: 0 0 12px; font: 600 34px/1.05 var(--font-pixelify), monospace; letter-spacing: -.02em; }
+.indexIntro { max-width: 31ch; font: 13px/1.55 Georgia, "Times New Roman", serif; }
+.contents { margin-top: 12px; }
+.contentsItem { display: grid; width: 100%; grid-template-columns: 20px 1fr 14px; gap: 8px; align-items: start; padding: 13px 0; text-align: left; cursor: pointer; font: 12px/1.45 Georgia, "Times New Roman", serif; transition: color 150ms ease; }
+.contentsItem[aria-pressed="true"] { color: #712639; }
+.contentsItem[aria-pressed="true"] .itemNumber { background: #712639; color: #ffe9e8; }
+.itemNumber { padding: 2px 1px; text-align: center; border-radius: 2px; font: 9px var(--font-mono), monospace; }
+.contentsItem:hover { color: #712639; }
+.contentsItem:focus-visible { outline: 2px solid #712639; outline-offset: 3px; }
+.note { position: relative; display: flex; flex-direction: column; gap: 12px; width: min(215px, 86%); margin: 28px 0 10px 26px; padding: 22px 18px 18px; background-color: #f0d06c; transform: rotate(-6deg); box-shadow: 2px 5px 8px rgb(0 0 0 / 20%); transition: transform 200ms ease; }
+.note:hover { transform: rotate(-3deg) translateY(-2px); }
+.signature { font: italic 25px Georgia, "Times New Roman", serif; }
+.note > span:last-child { display: flex; align-items: center; justify-content: space-between; font: 9px var(--font-mono), monospace; }
+.paperclip { position: absolute; right: 14px; top: -12px; width: 10px; height: 38px; border: 1.5px solid #606361; border-radius: 7px; transform: rotate(22deg); box-shadow: 1px 1px 1px #ffffff70; }
+.paperclip::after { content: ""; position: absolute; inset: 4px 2px -5px; border: 1px solid #606361; border-top: 0; border-radius: 0 0 5px 5px; }
+.documentArea { position: relative; padding-right: 32px; min-width: 0; }
+.backSheet { position: absolute; inset: 5px 29px -4px 6px; background: #ded4bd; transform: rotate(1deg); box-shadow: 1px 2px 2px rgb(0 0 0 / 20%); }
+.tabs { position: absolute; top: 18px; right: 0; bottom: 18px; width: 36px; display: flex; flex-direction: column; gap: 5px; overflow-y: auto; scrollbar-width: thin; }
+.tab { position: relative; flex: 0 0 85px; width: 32px; color: #313027; background: var(--tab-color); border-radius: 0 7px 7px 0; box-shadow: inset -2px 0 3px rgb(0 0 0 / 12%); cursor: pointer; opacity: .78; transition: width 200ms ease, opacity 200ms ease; }
+.tab > span { writing-mode: vertical-rl; font: 9px var(--font-mono), monospace; letter-spacing: .12em; }
+.tab[aria-selected="true"], .tab:hover { width: 36px; opacity: 1; }
+.tab:focus-visible { outline: 2px solid #fff; outline-offset: -3px; }
+.document { position: relative; min-height: 530px; background-color: #f4f0e5; box-shadow: 0 3px 8px rgb(0 0 0 / 22%); }
+.document:focus-visible { outline: 2px solid #e7a0ab; outline-offset: 2px; }
+.holes { position: absolute; top: 28px; bottom: 28px; left: 11px; display: flex; flex-direction: column; justify-content: space-between; }
+.holes i { width: 6px; height: 6px; border-radius: 50%; background: #b8561f; box-shadow: inset 0 1px 2px rgb(0 0 0 / 30%); }
+.documentContent { display: flex; flex-direction: column; min-height: 530px; padding: 20px 24px 20px 35px; animation: unfold 340ms ease both; }
+.byline { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 10px; font: 9px var(--font-mono), monospace; }
+.documentTitle { margin: 15px 0 18px; font: 36px/1.05 Georgia, "Times New Roman", serif; letter-spacing: -.04em; text-wrap: balance; overflow-wrap: anywhere; }
+.excerpt { margin: 20px 0; }
+.excerpt p { font: 15px/1.6 Georgia, "Times New Roman", serif; }
+.imageFrame { position: relative; height: 135px; margin-bottom: 22px; border: 5px solid #fffdf7; box-shadow: 0 1px 5px #00000021; transform: rotate(-1deg); }
+.postImage { object-fit: contain; object-position: center; background: #fffdf7; }
+.documentFooter { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: auto; }
+.readLink { display: inline-flex; align-items: center; gap: 8px; padding-block: 6px; font-size: 12px; font-weight: 600; }
+.readLink:hover { color: #9a4117; }
+.readLink:focus-visible, .note:focus-visible { outline: 2px solid #9a4117; outline-offset: 5px; }
+.bottomMarks { display: flex; justify-content: flex-end; margin-top: 14px; color: #737569; }
+.stamp { display: grid; place-items: center; width: 54px; height: 54px; padding: 7px; border: 1px dashed #9e552c; outline: 1px solid #9e552c; outline-offset: -4px; border-radius: 50%; color: #9e552c; font-size: 23px; transform: rotate(-14deg); }
+.emptyText { margin: 20px 0 30px; font: 16px/1.6 Georgia, "Times New Roman", serif; }
+.pagination { padding: 16px 0 0; }
+.pagination > div { display: flex; gap: 6px; }
+.pagination button { display: grid; place-items: center; width: 40px; height: 40px; border: 1px solid #a1a1aa50; border-radius: 50%; cursor: pointer; }
+.pagination button:hover:enabled { color: var(--desi-teal); border-color: currentColor; }
+.pagination button:disabled { opacity: .3; cursor: default; }
+.pagination button:focus-visible { outline: 2px solid var(--desi-teal); outline-offset: 3px; }
+@keyframes unfold { from { opacity: .3; transform: translateY(7px); } to { opacity: 1; transform: translateY(0); } }
+@media (min-width: 761px) and (max-width: 1199px) {
+  .documentTitle { font-size: 30px; }
+}
+@media (min-width: 1200px) {
+  .folder { padding: 26px; }
+  .spread { gap: 32px; }
+  .indexPaper { padding: 26px; }
+  .indexTitle { font-size: 42px; }
+  .indexIntro { font-size: 15px; }
+  .contentsItem { font-size: 14px; padding: 16px 0; }
+  .documentContent { padding: 24px 30px 22px 40px; }
+  .documentTitle { font-size: 42px; }
+  .excerpt p { font-size: 17px; }
+}
+@media (max-width: 760px) {
+  .folder { padding: 14px 12px 17px; }
+  .spread { grid-template-columns: 1fr; gap: 22px; }
+  .indexPaper { padding: 16px; }
+  .indexTitle { margin: 0 0 9px; font-size: 30px; }
+  .indexIntro { max-width: none; font-size: 13px; }
+  .contents { margin-top: 12px; }
+  .contentsItem { padding: 10px 0; }
+  .leftPage { position: relative; }
+  .note { margin: 16px 0 0 10px; padding: 12px 14px; gap: 6px; width: 195px; transform: rotate(-4deg); }
+  .signature { font-size: 23px; }
+  .paperclip { height: 29px; top: -8px; }
+  .documentArea { padding-right: 28px; }
+  .tabs { width: 32px; }
+  .tab { width: 28px; flex-basis: 73px; }
+  .tab[aria-selected="true"], .tab:hover { width: 32px; }
+  .document, .documentContent { min-height: 490px; }
+  .documentContent { padding: 17px 16px 17px 28px; }
+  .holes { left: 9px; }
+  .holes i { width: 5px; height: 5px; }
+  .byline { font-size: 8px; }
+  .documentTitle { font-size: 30px; }
+  .excerpt { margin: 20px 0; }
+  .excerpt p { font-size: 15px; }
+  .imageFrame { height: 120px; }
+  .pagination { font-size: 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .documentContent { animation: none; }
+  .note, .tab { transition: none; }
+}
