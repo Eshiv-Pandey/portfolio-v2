@@ -19,6 +19,7 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-sans);
+  --font-pixel: var(--font-pixelify), monospace;
   /* Enables `font-devanagari` on the micro-headings beside each section title. */
   --font-devanagari: var(--font-noto-devanagari), var(--font-geist-sans);
   --color-sidebar-ring: var(--sidebar-ring);

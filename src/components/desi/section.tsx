@@ -99,7 +99,7 @@ export function SectionHeading({
       {topRule && <DashedRule position="top" />}
 
       <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-        <h2 className="flex items-baseline gap-2 text-[18px] font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
+        <h2 className="flex items-baseline gap-2 font-pixel text-[22px] leading-tight font-semibold text-zinc-900 dark:text-zinc-100">
           <span
             aria-hidden="true"
             className="size-[5px] shrink-0 translate-y-[-3px] rotate-45 rounded-[1px]"
