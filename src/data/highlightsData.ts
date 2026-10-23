@@ -18,6 +18,7 @@ export type Highlight = {
   title: string;
   badge: string;
   image?: string;
+  imageFit?: "cover" | "contain";
   link?: string;
 };
 

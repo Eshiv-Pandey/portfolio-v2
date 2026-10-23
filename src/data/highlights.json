@@ -9,11 +9,15 @@
   {
     "id": "astraaya-winner",
     "title": "Winner: Astraaya 1.0 IEEE AI-War Hackathon",
+    "image": "/images/astraaya-hackathon.png",
+    "imageFit": "contain",
     "badge": "1st Place"
   },
   {
     "id": "gcloud-agentic-ai-day",
     "title": "Finalist: Google Cloud Agentic AI Day 2025",
+    "image": "/images/google-cloud-agentic-ai-day.png",
+    "imageFit": "contain",
     "badge": "Finalist"
   },
   {

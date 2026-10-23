@@ -23,7 +23,7 @@ function HighlightCard({ item }: { item: Highlight }) {
               alt={item.title}
               fill
               sizes="(min-width: 640px) 300px, 280px"
-              className="object-cover object-top transition-transform duration-500 group-hover:scale-[1.03]"
+              className={item.imageFit === "contain" ? "object-contain" : "object-cover object-top transition-transform duration-500 group-hover:scale-[1.03]"}
               draggable={false}
             />
           ) : (
