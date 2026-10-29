@@ -8,19 +8,19 @@ import { highlightsData, type Highlight } from "@/data/highlightsData";
 
 function HighlightCard({ item }: { item: Highlight }) {
   const inner = (
-    <div data-wild-scroll-target className="relative group w-[280px] sm:w-[300px] flex-shrink-0">
+    <div data-wild-scroll-target className="relative group h-full w-[280px] sm:w-[300px] flex-shrink-0">
       {/* Outer subtle double-border frame matching portfolio design language */}
       <div className="absolute -inset-[4px] border border-black/5 dark:border-white/5 rounded-[10px] pointer-events-none transition-colors duration-300 group-hover:border-black/10 dark:group-hover:border-white/10" />
 
       {/* Main Card Body */}
-      <div className="relative flex flex-col rounded-[6px] overflow-hidden bg-zinc-50 dark:bg-[#09090b] border border-black/5 dark:border-white/5 shadow-sm shadow-black/5 dark:shadow-lg dark:shadow-black/80 transition-all duration-300 group-hover:bg-zinc-100/80 dark:group-hover:bg-[#121214]">
+      <div className="relative flex h-full flex-col rounded-[6px] overflow-hidden bg-zinc-50 dark:bg-[#09090b] border border-black/5 dark:border-white/5 shadow-sm shadow-black/5 dark:shadow-lg dark:shadow-black/80 transition-all duration-300 group-hover:bg-zinc-100/80 dark:group-hover:bg-[#121214]">
         {/* Cover — a real screenshot when there is one, generated poster art
             when there isn't. */}
-        <div className="relative w-full aspect-video bg-zinc-100 dark:bg-[#0a0a0a] overflow-hidden">
+        <div className="relative w-full shrink-0 aspect-video bg-zinc-100 dark:bg-[#0a0a0a] overflow-hidden">
           {item.image ? (
             <Image
               src={item.image}
-              alt={item.title}
+              alt={item.imageAlt ?? item.title}
               fill
               sizes="(min-width: 640px) 300px, 280px"
               className={item.imageFit === "contain" ? "object-contain" : "object-cover object-top transition-transform duration-500 group-hover:scale-[1.03]"}
@@ -65,9 +65,14 @@ function HighlightCard({ item }: { item: Highlight }) {
               </svg>
             )}
           </div>
-          <p className="text-[13px] font-medium text-zinc-800 dark:text-zinc-200 leading-snug transition-colors group-hover:text-zinc-900 dark:group-hover:text-white line-clamp-2">
+          <p className="text-[13px] font-medium text-zinc-800 dark:text-zinc-200 leading-snug transition-colors group-hover:text-zinc-900 dark:group-hover:text-white">
             {item.title}
           </p>
+          {item.description && (
+            <p className="text-[12px] leading-relaxed text-zinc-600 dark:text-zinc-400">
+              {item.description}
+            </p>
+          )}
         </div>
       </div>
     </div>
@@ -96,7 +101,7 @@ export function Highlights() {
 
       <div className="highlights-track flex gap-4 w-max">
         {items.map((item, i) => (
-          <HighlightCard key={i} item={item} />
+          <HighlightCard key={`${item.id}-${i}`} item={item} />
         ))}
       </div>
     </div>

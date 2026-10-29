@@ -189,7 +189,7 @@ export default async function Home() {
           </p>
         </Reveal>
 
-          <div className="flex w-[280px] max-w-full flex-col gap-4 min-[900px]:items-end">
+          <div className="flex w-full flex-col items-center gap-4 min-[900px]:w-[280px] min-[900px]:items-end">
             <SocialLinks className="min-[900px]:!hidden" />
             <HeroActions />
           </div>

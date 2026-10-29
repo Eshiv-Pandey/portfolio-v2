@@ -150,7 +150,7 @@ export function Footer() {
               </li>
             </Column>
 
-            <div>
+            <div className="col-span-2 md:col-span-1">
               <Heading>Connect With Me</Heading>
               <ul className="mt-2 space-y-1.5">
                 <li>
@@ -179,7 +179,7 @@ export function Footer() {
                 </li>
               </ul>
 
-              <SocialLinks className="mt-4" />
+              <SocialLinks className="mt-4 max-md:mx-auto" />
             </div>
           </div>
         </div>

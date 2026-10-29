@@ -16,8 +16,10 @@ import raw from "./highlights.json";
 export type Highlight = {
   id: string;
   title: string;
+  description?: string;
   badge: string;
   image?: string;
+  imageAlt?: string;
   imageFit?: "cover" | "contain";
   link?: string;
 };

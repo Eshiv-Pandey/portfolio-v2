@@ -1,5 +1,15 @@
 [
   {
+    "id": "icpc-sri-lanka-physical-round-2026-2027",
+    "title": "ICPC Sri Lanka 2026/2027: Physical Round Qualifier",
+    "description": "Led Team TheWeak3 to qualify for the ICPC Sri Lanka Regional Physical Round, representing the Faculty of Technology, University of Delhi.",
+    "image": "/images/icpc-sri-lanka-qualification-detail-2026-2027.png",
+    "imageAlt": "ICPC qualification email confirming Team TheWeak3 advanced to the Physical Round",
+    "imageFit": "contain",
+    "badge": "ICPC Regional",
+    "link": "/images/icpc-sri-lanka-physical-round-qualifier-2026-2027.png"
+  },
+  {
     "id": "hami-member",
     "title": "Project Member of HAMi, a CNCF Sandbox project",
     "image": "/images/hami-community.webp",

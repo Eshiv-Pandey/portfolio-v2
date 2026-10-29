@@ -1,14 +1,18 @@
 .links {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 10px;
   width: fit-content;
+  max-width: 100%;
 }
 
 .link {
   display: flex;
   align-items: center;
   flex-direction: column;
+  min-width: 44px;
+  min-height: 44px;
   gap: 5px;
   border-radius: 12px;
   text-decoration: none;
@@ -99,6 +103,13 @@
 :global(.dark) .label { color: #a1a1aa; }
 .link:hover .tile, .link:focus-visible .tile { transform: translateY(-3px) rotate(0deg) scale(1.06); }
 .link:focus-visible { outline: 2px solid var(--desi-teal); }
+
+@media (width < 640px) {
+  .tile {
+    width: 44px;
+    height: 44px;
+  }
+}
 
 @media (prefers-reduced-motion: reduce) {
   .tile { transition: none; }
