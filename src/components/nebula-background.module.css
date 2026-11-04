@@ -1,0 +1,29 @@
+.background {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background: #fcf3ec;
+}
+.background::before {
+  content: "";
+  position: absolute;
+  inset: -4%;
+  background:
+    radial-gradient(ellipse at 30% 40%, #e9a20855, transparent 55%),
+    radial-gradient(ellipse at 74% 28%, #0e7c7b40, transparent 50%),
+    radial-gradient(ellipse at 58% 78%, #d86b7345, transparent 55%);
+  animation: haze 36s ease-in-out infinite alternate;
+  animation-play-state: paused;
+}
+:global(.dark) .background { background: #150f0d; }
+:global(.dark) .background::before {
+  background:
+    radial-gradient(ellipse at 30% 40%, #d173294f, transparent 55%),
+    radial-gradient(ellipse at 74% 28%, #1a706e40, transparent 50%),
+    radial-gradient(ellipse at 58% 78%, #9e425230, transparent 55%);
+}
+.background[data-nebula-running]::before { animation-play-state: running; }
+.canvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
+@keyframes haze { to { transform: translate(2%, -2%) scale(1.04); } }
+@media (prefers-reduced-motion: reduce) { .background::before { animation: none; } }

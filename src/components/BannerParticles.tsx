@@ -107,8 +107,10 @@ export function BannerParticles({ count = settings.particleCount }: { count?: nu
 
     let width = 0;
     let height = 0;
-    let animationFrameId: number;
+    let animationFrameId = 0;
     let isUnmounted = false;
+    let visible = false;
+    const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
     updateCache();
     const particleImage = createDefaultImage();
@@ -199,7 +201,7 @@ export function BannerParticles({ count = settings.particleCount }: { count?: nu
       }
 
       draw() {
-        if (!ctx || !particleImage) return;
+        if (!ctx || !particleImage?.complete || !particleImage.naturalWidth) return;
         const vecU = rotateVector(1, 0, 0, this.angleX, this.angleY + cache.tiltRad, this.angleZ);
         const vecV = rotateVector(0, 1, 0, this.angleX, this.angleY + cache.tiltRad, this.angleZ);
 
@@ -223,6 +225,7 @@ export function BannerParticles({ count = settings.particleCount }: { count?: nu
         height = canvas.height = parent.clientHeight;
         ctx.imageSmoothingEnabled = true;
         ctx.imageSmoothingQuality = "high";
+        sync();
       }
     };
 
@@ -237,7 +240,8 @@ export function BannerParticles({ count = settings.particleCount }: { count?: nu
     };
 
     const animate = () => {
-      if (isUnmounted) return;
+      animationFrameId = 0;
+      if (isUnmounted || !visible || document.hidden || motion.matches) return;
       ctx.clearRect(0, 0, width, height);
 
       for (const particle of particles) {
@@ -248,41 +252,34 @@ export function BannerParticles({ count = settings.particleCount }: { count?: nu
       animationFrameId = requestAnimationFrame(animate);
     };
 
-    setTimeout(() => {
-      if (isUnmounted) return;
-      resize();
-
-      // Reduced motion gets one still frame of scattered petals rather than
-      // an empty canvas — the decoration survives, the drift doesn't.
-      const stillOnly =
-        typeof window.matchMedia === "function" &&
-        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-      initParticles(stillOnly);
-
-      if (stillOnly) {
-        // The petal is a data-URL image, so it may not have decoded yet. With
-        // no animation loop there's no second chance to paint it.
-        const paintOnce = () => {
-          if (isUnmounted) return;
-          for (const particle of particles) particle.draw();
-        };
-        if (particleImage.complete) paintOnce();
-        else particleImage.onload = paintOnce;
-        return;
-      }
-
-      animate();
-    }, 0);
-
-    window.addEventListener("resize", resize);
+    function sync() {
+      cancelAnimationFrame(animationFrameId);
+      animationFrameId = 0;
+      if (isUnmounted || !visible || document.hidden || !particleImage?.complete || !particleImage.naturalWidth) return;
+      if (motion.matches) {
+        ctx?.clearRect(0, 0, width, height);
+        for (const particle of particles) particle.draw();
+      } else animate();
+    }
+    const motionChange = () => { initParticles(motion.matches); sync(); };
+    const parent = canvas.parentElement;
+    const ro = new ResizeObserver(resize);
+    const io = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; sync(); });
+    if (parent) { ro.observe(parent); io.observe(parent); }
+    document.addEventListener("visibilitychange", sync);
+    motion.addEventListener("change", motionChange);
+    particleImage.onload = sync;
+    resize();
+    initParticles(motion.matches);
 
     return () => {
       isUnmounted = true;
-      window.removeEventListener("resize", resize);
-      if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId);
-      }
+      ro.disconnect();
+      io.disconnect();
+      document.removeEventListener("visibilitychange", sync);
+      motion.removeEventListener("change", motionChange);
+      particleImage.onload = null;
+      cancelAnimationFrame(animationFrameId);
     };
   }, [count]);
 

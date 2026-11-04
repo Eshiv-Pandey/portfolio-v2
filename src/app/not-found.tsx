@@ -7,6 +7,7 @@ import { CommandMenu } from "@/components/command-menu";
 import { CurrentTime } from "@/components/CurrentTime";
 import { FooterBackground } from "@/components/FooterBackground";
 import { DASH_MASK, DASH_MASK_VERTICAL } from "@/components/desi/section";
+import styles from "./not-found.module.css";
 
 /**
  * The 404.
@@ -18,7 +19,7 @@ import { DASH_MASK, DASH_MASK_VERTICAL } from "@/components/desi/section";
  */
 export default function NotFound() {
   return (
-    <div className="relative min-h-screen w-full overflow-x-hidden bg-white transition-colors duration-300 dark:bg-black">
+    <div className={`${styles.page} w-full overflow-x-clip bg-white transition-colors duration-300 dark:bg-black`}>
       {/* Vertical Lines - Ultra-fine Micro Dots */}
       <div
         className="pointer-events-none absolute top-0 bottom-0 left-(--gutter) hidden w-0 border-r border-black/30 md:block dark:border-white/[0.15]"
@@ -31,20 +32,20 @@ export default function NotFound() {
 
       {/* Horizontal Lines - Ultra-fine Micro Dots */}
       <div
-        className="pointer-events-none absolute left-0 right-0 top-[22vh] h-0 border-b border-black/30 dark:border-white/[0.15]"
+        className="pointer-events-none absolute left-0 right-0 top-(--not-found-banner) h-0 border-b border-black/30 dark:border-white/[0.15]"
         style={{ maskImage: DASH_MASK, WebkitMaskImage: DASH_MASK }}
       />
       <div
-        className="pointer-events-none absolute left-0 right-0 top-[calc(22vh+112px)] h-0 border-b border-black/30 dark:border-white/[0.15]"
+        className="pointer-events-none absolute left-0 right-0 top-[calc(var(--not-found-banner)+var(--not-found-header))] h-0 border-b border-black/30 dark:border-white/[0.15]"
         style={{ maskImage: DASH_MASK, WebkitMaskImage: DASH_MASK }}
       />
 
       {/* Ultra-Tiny Solid Nodes */}
       {[
-        { top: "22vh", left: "var(--gutter)" },
-        { top: "22vh", right: "var(--gutter-r)" },
-        { top: "calc(22vh + 112px)", left: "var(--gutter)" },
-        { top: "calc(22vh + 112px)", right: "var(--gutter-r)" },
+        { top: "var(--not-found-banner)", left: "var(--gutter)" },
+        { top: "var(--not-found-banner)", right: "var(--gutter-r)" },
+        { top: "calc(var(--not-found-banner) + var(--not-found-header))", left: "var(--gutter)" },
+        { top: "calc(var(--not-found-banner) + var(--not-found-header))", right: "var(--gutter-r)" },
       ].map((pos, i) => (
         <div
           key={i}
@@ -59,7 +60,7 @@ export default function NotFound() {
       ))}
 
       {/* Cell 1: Dot Matrix Background */}
-      <div className="pointer-events-auto absolute left-0 right-0 top-0 -z-0 h-[22vh] md:left-(--gutter) md:right-(--gutter-r)">
+      <div className="pointer-events-auto absolute left-0 right-0 top-0 -z-0 h-(--not-found-banner) md:left-(--gutter) md:right-(--gutter-r)">
         <FooterBackground />
         <div className="pointer-events-auto absolute bottom-3 right-2 z-10">
           <CurrentTime />
@@ -67,7 +68,7 @@ export default function NotFound() {
       </div>
 
       {/* Cell 2: Header with Back Button + Title + Controls */}
-      <div className="absolute left-0 right-0 top-[22vh] z-50 flex h-[112px] items-center px-4 md:left-(--gutter) md:right-(--gutter-r)">
+      <div className="absolute left-0 right-0 top-(--not-found-banner) z-50 flex h-(--not-found-header) items-center px-4 md:left-(--gutter) md:right-(--gutter-r)">
         <div className="flex w-full items-center justify-between">
           <div className="flex items-center gap-5">
             <Link
@@ -87,7 +88,7 @@ export default function NotFound() {
             </div>
           </div>
 
-          <div className="flex h-20 items-start justify-end gap-2 py-1 sm:h-24 sm:gap-3">
+          <div className="flex items-center justify-end gap-2 sm:gap-3">
             <CommandMenu />
             <ThemeToggle className="dark:text-zinc-400 hover:dark:text-zinc-300" />
           </div>
@@ -95,12 +96,13 @@ export default function NotFound() {
       </div>
 
       {/* Content Section */}
-      <div className="relative z-10 ml-0 mr-0 flex flex-col px-4 pt-[calc(22vh+112px)] pb-16 md:ml-(--gutter) md:mr-(--gutter-r)">
-        <div className="reveal-up mt-8 flex flex-col items-center text-center">
+      <div className={`${styles.content} relative z-10 mx-0 px-4 md:ml-(--gutter) md:mr-(--gutter-r)`}>
+        <div className={styles.contentInner}>
           {/* The plate: a marigold border with the art inset, the same
               construction as the profile frame on the home page. */}
+          <div className={styles.art}>
           <div
-            className="w-full max-w-[520px] rounded-[10px] p-[5px] shadow-[0_18px_50px_-24px_rgba(179,32,44,0.65)]"
+            className={`${styles.plate} rounded-[10px] p-[5px] shadow-[0_18px_50px_-24px_rgba(179,32,44,0.65)]`}
             style={{ backgroundColor: "var(--desi-marigold)" }}
           >
             <Image
@@ -113,8 +115,9 @@ export default function NotFound() {
               className="h-auto w-full rounded-[6px]"
             />
           </div>
+          </div>
 
-          <p className="mt-6 max-w-[440px] text-[14px] leading-relaxed text-zinc-600 dark:text-zinc-300">
+          <p className="max-w-[440px] text-[14px] leading-relaxed text-zinc-600 dark:text-zinc-300">
             Truck-art Hindi for{" "}
             <span className="font-devanagari" lang="hi">
               हेल NA
@@ -123,17 +126,17 @@ export default function NotFound() {
             URL.
           </p>
 
-          <div className="mt-7 flex flex-wrap items-center justify-center gap-2.5">
+          <div className="flex flex-wrap items-center justify-center gap-2.5">
             <Link
               href="/"
-              className="flex items-center gap-1.5 rounded-md px-3.5 py-2 text-[13px] font-medium text-white transition-opacity hover:opacity-90"
+              className="flex min-h-11 items-center gap-1.5 rounded-md px-3.5 py-2 text-[13px] font-medium text-white transition-opacity hover:opacity-90"
               style={{ backgroundColor: "var(--desi-maroon)" }}
             >
               Back home
             </Link>
             <Link
               href="/projects"
-              className="flex items-center gap-1 rounded-md border border-zinc-200/70 bg-zinc-100 px-3.5 py-2 text-[13px] font-medium text-zinc-600 transition-colors hover:bg-zinc-200 dark:border-zinc-700/50 dark:bg-zinc-800/40 dark:text-zinc-300 dark:hover:bg-zinc-800"
+              className="flex min-h-11 items-center gap-1 rounded-md border border-zinc-200/70 bg-zinc-100 px-3.5 py-2 text-[13px] font-medium text-zinc-600 transition-colors hover:bg-zinc-200 dark:border-zinc-700/50 dark:bg-zinc-800/40 dark:text-zinc-300 dark:hover:bg-zinc-800"
             >
               See the projects
               <ArrowUpRight className="h-3.5 w-3.5" />
@@ -142,7 +145,7 @@ export default function NotFound() {
         </div>
 
         {/* Bottom Separator */}
-        <div className="relative mt-12">
+        <div className="pointer-events-none absolute inset-x-0 bottom-2">
           <div
             className="pointer-events-none absolute left-[-100vw] right-[-100vw] h-0 border-b border-black/30 dark:border-white/[0.15]"
             style={{ maskImage: DASH_MASK, WebkitMaskImage: DASH_MASK }}

@@ -2,7 +2,8 @@
 
 import { useEffect, useRef } from "react";
 
-import { useReducedMotion } from "@/hooks/use-reduced-motion";
+import type * as Three from "three";
+import styles from "./nebula-background.module.css";
 
 /**
  * A soft animated nebula that fills the footer behind its content, replacing
@@ -11,9 +12,9 @@ import { useReducedMotion } from "@/hooks/use-reduced-motion";
  * warm cream/marigold/teal/rose haze in light mode, a deeper glow on near-black
  * in dark mode, so the footer's own ink stays readable in both.
  *
- * Under `prefers-reduced-motion` it renders a single still frame instead of
- * animating, and if WebGL is unavailable the parent's own background shows
- * through unharmed.
+ * Touch and small screens use a CSS haze to avoid mobile GPU context crashes.
+ * Desktop rendering is bounded, pauses offscreen, and falls back to that haze
+ * if WebGL fails. Reduced motion freezes either version.
  */
 
 const FRAG = /* glsl */ `
@@ -74,7 +75,6 @@ const VERT = /* glsl */ `
 `;
 
 export function NebulaBackground() {
-  const reducedMotion = useReducedMotion();
   const hostRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -83,82 +83,138 @@ export function NebulaBackground() {
 
     let disposed = false;
     let raf = 0;
-    // Loaded lazily so three never lands in the initial bundle for the rest of
-    // the page — the footer is far below the fold.
-    let cleanup: (() => void) | undefined;
+    let visible = false;
+    let initializing = false;
+    let failed = false;
+    let elapsed = 0;
+    let lastFrame = 0;
+    let lastPaint = 0;
+    let renderer: Three.WebGLRenderer | undefined;
+    let canvas: HTMLCanvasElement | undefined;
+    let scene: Three.Scene | undefined;
+    let camera: Three.Camera | undefined;
+    let geometry: Three.PlaneGeometry | undefined;
+    let material: Three.ShaderMaterial | undefined;
+    const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const simple = window.matchMedia("(max-width: 767px), (pointer: coarse)");
 
-    import("three").then((THREE) => {
-      if (disposed) return;
-
-      let renderer: import("three").WebGLRenderer;
+    const stop = () => { cancelAnimationFrame(raf); raf = 0; };
+    const setState = (state: "css" | "webgl" | "paused" | "fallback") => {
+      host.dataset.nebulaState = state;
+      host.toggleAttribute("data-nebula-running", visible && !document.hidden && !motion.matches && !renderer);
+    };
+    const release = () => {
+      stop();
+      canvas?.removeEventListener("webglcontextlost", lost);
       try {
-        renderer = new THREE.WebGLRenderer({ antialias: false, alpha: false });
-      } catch {
-        return; // No WebGL — the parent background stays as-is.
-      }
-      renderer.domElement.style.cssText = "width:100%;height:100%;display:block";
-      host.appendChild(renderer.domElement);
-
-      const scene = new THREE.Scene();
-      const camera = new THREE.Camera();
-      const uniforms = {
-        uResolution: { value: new THREE.Vector2(1, 1) },
-        uTime: { value: 0 },
-        uDark: {
-          value: document.documentElement.classList.contains("dark") ? 1 : 0,
-        },
-      };
-      const mesh = new THREE.Mesh(
-        new THREE.PlaneGeometry(2, 2),
-        new THREE.ShaderMaterial({ vertexShader: VERT, fragmentShader: FRAG, uniforms })
-      );
-      scene.add(mesh);
-
-      const resize = () => {
-        const { clientWidth: w, clientHeight: h } = host;
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
-        renderer.setSize(w, h, false);
-        uniforms.uResolution.value.set(w, h);
-      };
-      resize();
-      const ro = new ResizeObserver(resize);
-      ro.observe(host);
-
-      // Follow theme flips without a remount.
-      const themeObs = new MutationObserver(() => {
-        uniforms.uDark.value = document.documentElement.classList.contains("dark") ? 1 : 0;
-        if (reducedMotion) renderer.render(scene, camera);
-      });
-      themeObs.observe(document.documentElement, {
-        attributes: true,
-        attributeFilter: ["class"],
-      });
-
-      const start = performance.now();
-      const frame = () => {
-        uniforms.uTime.value = (performance.now() - start) / 1000;
+        geometry?.dispose();
+        material?.dispose();
+        renderer?.dispose();
+        renderer?.forceContextLoss();
+      } catch { /* A lost context may already have released its resources. */ }
+      canvas?.remove();
+      renderer = canvas = scene = camera = geometry = material = undefined;
+    };
+    const fallback = () => { failed = true; release(); setState("fallback"); };
+    function lost(event: Event) {
+      event.preventDefault();
+      // Keep the CSS version for this visit instead of repeatedly retrying a
+      // failing GPU and leaving a broken canvas in the banner or footer.
+      fallback();
+    }
+    const paint = () => {
+      if (!renderer || !scene || !camera || !material || !host.clientWidth || !host.clientHeight) return false;
+      try {
+        material.uniforms.uTime.value = elapsed;
+        material.uniforms.uDark.value = document.documentElement.classList.contains("dark") ? 1 : 0;
         renderer.render(scene, camera);
-        raf = requestAnimationFrame(frame);
-      };
-      if (reducedMotion) renderer.render(scene, camera);
-      else frame();
-
-      cleanup = () => {
-        cancelAnimationFrame(raf);
-        ro.disconnect();
-        themeObs.disconnect();
-        mesh.geometry.dispose();
-        (mesh.material as import("three").ShaderMaterial).dispose();
-        renderer.dispose();
-        renderer.domElement.remove();
-      };
-    });
+        return true;
+      } catch { fallback(); return false; }
+    };
+    const frame = (now: number) => {
+      raf = 0;
+      if (disposed || !visible || document.hidden || motion.matches || !renderer) return;
+      elapsed += Math.min(now - lastFrame, 100) / 1000;
+      lastFrame = now;
+      // The soft haze needs only 30 painted frames per second.
+      if (now - lastPaint >= 1000 / 30) {
+        lastPaint = now;
+        if (!paint()) return;
+      }
+      raf = requestAnimationFrame(frame);
+    };
+    const size = () => {
+      if (!renderer || !canvas || !material) return;
+      const w = host.clientWidth, h = host.clientHeight;
+      if (!w || !h) return;
+      // Bound the actual drawing buffer, including on high-DPI screens.
+      const scale = Math.min(1, Math.sqrt(300000 / (w * h)));
+      const width = Math.max(1, Math.floor(w * scale));
+      const height = Math.max(1, Math.floor(h * scale));
+      if (canvas.width !== width || canvas.height !== height) renderer.setSize(width, height, false);
+      material.uniforms.uResolution.value.set(canvas.width, canvas.height);
+    };
+    const initialize = async () => {
+      if (disposed || initializing || failed || simple.matches || renderer) return;
+      initializing = true;
+      try {
+        const THREE = await import("three");
+        if (disposed || simple.matches || !visible || document.hidden) return;
+        canvas = document.createElement("canvas");
+        canvas.className = styles.canvas;
+        canvas.addEventListener("webglcontextlost", lost);
+        renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: false, depth: false, stencil: false, powerPreference: "low-power" });
+        renderer.setPixelRatio(1);
+        scene = new THREE.Scene();
+        camera = new THREE.Camera();
+        geometry = new THREE.PlaneGeometry(2, 2);
+        material = new THREE.ShaderMaterial({ vertexShader: VERT, fragmentShader: FRAG, uniforms: {
+          uResolution: { value: new THREE.Vector2(1, 1) },
+          uTime: { value: elapsed },
+          uDark: { value: document.documentElement.classList.contains("dark") ? 1 : 0 },
+        } });
+        scene.add(new THREE.Mesh(geometry, material));
+        size();
+        host.appendChild(canvas);
+        sync();
+      } catch { if (!disposed) fallback(); }
+      finally { initializing = false; }
+    };
+    function sync() {
+      stop();
+      if (disposed || !host) return;
+      if (simple.matches) { release(); setState("css"); return; }
+      if (failed) { setState("fallback"); return; }
+      if (!visible || document.hidden || !host.clientWidth || !host.clientHeight) { setState(renderer ? "paused" : "css"); return; }
+      if (!renderer) { void initialize(); return; }
+      if (!paint()) return;
+      setState("webgl");
+      if (!motion.matches) { lastFrame = performance.now(); lastPaint = lastFrame; raf = requestAnimationFrame(frame); }
+    }
+    const resize = () => {
+      try { size(); sync(); } catch { fallback(); }
+    };
+    const ro = new ResizeObserver(resize);
+    ro.observe(host);
+    const io = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; sync(); });
+    io.observe(host);
+    const themeObserver = new MutationObserver(sync);
+    themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+    document.addEventListener("visibilitychange", sync);
+    motion.addEventListener("change", sync);
+    simple.addEventListener("change", sync);
 
     return () => {
       disposed = true;
-      cleanup?.();
+      ro.disconnect();
+      io.disconnect();
+      themeObserver.disconnect();
+      document.removeEventListener("visibilitychange", sync);
+      motion.removeEventListener("change", sync);
+      simple.removeEventListener("change", sync);
+      release();
     };
-  }, [reducedMotion]);
+  }, []);
 
-  return <div ref={hostRef} aria-hidden="true" className="absolute inset-0" />;
+  return <div ref={hostRef} data-nebula data-nebula-state="css" aria-hidden="true" className={styles.background} />;
 }
