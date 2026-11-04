@@ -74,7 +74,7 @@ export function WildCursor() {
       context!.setTransform(ratio, 0, 0, ratio, 0, 0);
       context!.imageSmoothingEnabled = false;
       hero = document.querySelector("[data-cursor-hero]");
-      heartStart = document.getElementById("skills");
+      heartStart = document.getElementById("writing");
       heartEnd = document.getElementById("highlights");
       scrollTargets = Array.from(document.querySelectorAll("[data-wild-scroll-target], [data-hero-controls] button"));
     }

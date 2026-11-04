@@ -1,122 +1,90 @@
 "use client";
 
-import { useRef, useState } from "react";
-import type { CSSProperties, KeyboardEvent } from "react";
-import Image from "next/image";
-import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
-
+import { useEffect, useRef, useState } from "react";
+import type { CSSProperties } from "react";
+import { useTheme } from "next-themes";
+import { ArrowUpRight } from "lucide-react";
+import { ClickMeSignature } from "@/components/ClickMeSignature";
+import { LiquidMetalButton } from "@/components/ui/liquid-metal-button";
+import GlassFolder from "@/components/ui/glass-folder-cards";
+import type { FolderFile } from "@/components/ui/glass-folder-cards";
 import type { MediumPost } from "@/lib/medium";
 import { MEDIUM_PROFILE_URL } from "@/lib/medium";
 import styles from "./reading-folder.module.css";
 
-const DATE_FORMAT = new Intl.DateTimeFormat("en-GB", {
-  day: "numeric", month: "short", year: "numeric", timeZone: "UTC",
-});
-const TAB_COLORS = ["#e7a0ab", "#f4e9d1", "#b2d4c6", "#f1cc64"];
-const fileNumber = (index: number) => String(index + 1).padStart(2, "0");
-
-/** An open, tabbed document folder, populated by the server's Medium feed. */
 export function BlogList({ posts }: { posts: MediumPost[] }) {
-  const [selectedLink, setSelectedLink] = useState(posts[0]?.link ?? "");
-  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const foundIndex = posts.findIndex((post) => post.link === selectedLink);
-  const activeIndex = Math.max(0, foundIndex);
-  const post = posts[activeIndex];
+  const [open, setOpen] = useState(false);
+  const [width, setWidth] = useState(280);
+  const [headerStep, setHeaderStep] = useState(76);
+  const readingRef = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const { resolvedTheme } = useTheme();
+  const episodes = posts.slice(0, 2);
+  const files: FolderFile[] = episodes.map((post, index) => ({
+    name: post.title,
+    meta: `Episode ${post.title.match(/^EP0*(\d+)/i)?.[1] ?? index + 1} · ${post.readingTime}`,
+    image: post.image ?? undefined,
+    href: post.link,
+  }));
 
-  function selectTab(index: number, focus = false) {
-    setSelectedLink(posts[index].link);
-    if (focus) tabRefs.current[index]?.focus();
-  }
+  useEffect(() => {
+    const stage = stageRef.current;
+    if (!stage || typeof ResizeObserver === "undefined") return;
+    const measure = () => {
+      const headers = stage.querySelectorAll<HTMLElement>(".gf-sheet-head");
+      if (!headers.length) return;
+      const tallest = Math.max(...Array.from(headers, (header) => header.getBoundingClientRect().height / (width / 340)));
+      const step = Math.max(50, Math.ceil(tallest + 18));
+      setHeaderStep((previous) => Math.abs(previous - step) > 1 ? step : previous);
+    };
+    const observer = new ResizeObserver((entries) => {
+      const entry = entries.find((item) => item.target === stage);
+      if (entry) setWidth(Math.min(440, Math.max(140, entry.contentRect.width)));
+      measure();
+    });
+    observer.observe(stage);
+    stage.querySelectorAll(".gf-sheet-head").forEach((header) => observer.observe(header));
+    measure();
+    return () => observer.disconnect();
+  }, [width, posts]);
 
-  function navigateTabs(event: KeyboardEvent<HTMLButtonElement>, index: number) {
-    let next = index;
-    if (event.key === "ArrowDown" || event.key === "ArrowRight") next = (index + 1) % posts.length;
-    else if (event.key === "ArrowUp" || event.key === "ArrowLeft") next = (index - 1 + posts.length) % posts.length;
-    else if (event.key === "Home") next = 0;
-    else if (event.key === "End") next = posts.length - 1;
-    else return;
-    event.preventDefault();
-    selectTab(next, true);
+  if (episodes.length === 0) {
+    return <div className={styles.empty}><p>The episodes live on Medium.</p><a href={MEDIUM_PROFILE_URL} target="_blank" rel="noopener noreferrer">Read on Medium <ArrowUpRight size={15} aria-hidden="true" /></a></div>;
   }
 
   return (
-    <div className={styles.reading}>
-      <div className={styles.folder}>
-        <span className={styles.folderLabel}>Field notes</span>
-        <div className={styles.spread}>
-          <aside className={styles.leftPage}>
-            <div className={styles.indexPaper}>
-              <h3 className={styles.indexTitle}>Notes &amp; ideas.</h3>
-              <div className={styles.contents}>
-                {posts.map((item, index) => (
-                  <button key={item.link} type="button" onClick={() => selectTab(index)} aria-pressed={index === activeIndex} className={styles.contentsItem}>
-                    <span className={styles.itemNumber}>{fileNumber(index)}</span>
-                    <span>{item.title}</span>
-                    <ArrowUpRight aria-hidden="true" size={14} />
-                  </button>
-                ))}
-                {posts.length === 0 && <p className={styles.indexIntro}>Browse the complete collection on Medium.</p>}
-              </div>
-            </div>
-            <a className={styles.note} href={MEDIUM_PROFILE_URL} target="_blank" rel="noopener noreferrer">
-              <span className={styles.paperclip} aria-hidden="true" />
-              <span className={styles.signature}>Eshiv Pandey</span>
-              <span>On Medium <ArrowUpRight aria-hidden="true" size={12} /></span>
-            </a>
-          </aside>
-
-          <div className={styles.documentArea}>
-            <div className={styles.backSheet} aria-hidden="true" />
-            <div className={styles.tabs} role="tablist" aria-label="Medium articles" aria-orientation="vertical">
-              {posts.map((item, index) => (
-                <button
-                  key={item.link}
-                  ref={(element) => { tabRefs.current[index] = element; }}
-                  type="button" role="tab" id={`reading-tab-${index}`} aria-controls="reading-document"
-                  aria-selected={activeIndex === index} aria-label={`File ${fileNumber(index)}: ${item.title}`}
-                  tabIndex={activeIndex === index ? 0 : -1}
-                  onClick={() => selectTab(index)} onKeyDown={(event) => navigateTabs(event, index)}
-                  className={styles.tab} style={{ "--tab-color": TAB_COLORS[index % TAB_COLORS.length] } as CSSProperties}
-                >
-                  <span>{fileNumber(index)}</span>
-                </button>
-              ))}
-            </div>
-            <article id="reading-document" role={post ? "tabpanel" : undefined} aria-labelledby={post ? `reading-tab-${activeIndex}` : undefined} tabIndex={0} className={styles.document}>
-              <div className={styles.holes} aria-hidden="true"><i /><i /><i /><i /><i /></div>
-              <div key={post?.link ?? "empty"} className={styles.documentContent}>
-                {post ? (
-                  <>
-                    <div className={styles.byline}><time dateTime={post.date}>{DATE_FORMAT.format(new Date(post.date))}</time><span>{post.readingTime}</span></div>
-                    <h3 className={styles.documentTitle}>{post.title}</h3>
-                    <div className={styles.excerpt}>
-                      <p>{post.description}</p>
-                    </div>
-                    {post.image && <div className={styles.imageFrame}><Image src={post.image} alt={`Illustration from ${post.title}`} fill sizes="(max-width: 600px) 75vw, (max-width: 1200px) 40vw, 480px" className={styles.postImage} /></div>}
-                    <div className={styles.documentFooter}>
-                      <a href={post.link} target="_blank" rel="noopener noreferrer" className={styles.readLink}>Read on Medium <ArrowUpRight aria-hidden="true" size={16} /></a>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <h3 className={styles.documentTitle}>The notes<br />live on Medium.</h3>
-                    <p className={styles.emptyText}>The articles couldn&apos;t be loaded right now. You can still read them in my Medium archive.</p>
-                    <a href={MEDIUM_PROFILE_URL} target="_blank" rel="noopener noreferrer" className={styles.readLink}>Visit my Medium <ArrowUpRight aria-hidden="true" size={16} /></a>
-                  </>
-                )}
-                <div className={styles.bottomMarks} aria-hidden="true"><span className={styles.stamp}>✦</span></div>
-              </div>
-            </article>
-          </div>
-        </div>
+    <div ref={readingRef} className={styles.reading} style={{
+      "--reading-scale": width / 340,
+      "--reading-header-step": `${headerStep}px`,
+      "--reading-headroom": `${Math.max(76, (headerStep * 2 - 120) * (width / 340) + 24)}px`,
+    } as CSSProperties}>
+      <div ref={stageRef} className={styles.stage}>
+        {!open && <div className={styles.hint} aria-hidden="true">
+          <ClickMeSignature className={styles.hintText} />
+          <svg viewBox="0 0 76 72" fill="none">
+            <path d="M62 6C69 34 48 58 12 64M12 64L23 50M12 64L30 66" />
+          </svg>
+        </div>}
+        <GlassFolder
+          key={episodes.map((post) => post.link).join("|")}
+          label="Reading"
+          meta={`${episodes.length} ${episodes.length === 1 ? "episode" : "episodes"} on Medium`}
+          art="aurora"
+          files={files}
+          action="none"
+          width={width}
+          open={open}
+          onOpenChange={setOpen}
+          dismissBoundaryRef={readingRef}
+          tone={resolvedTheme === "dark" ? "dark" : "light"}
+          appear={false}
+          className={styles.folder}
+        />
       </div>
-      {posts.length > 0 && <div className={styles.pagination}>
-        <p aria-live="polite">{fileNumber(activeIndex)} / {fileNumber(posts.length - 1)}</p>
-        <div>
-          <button type="button" aria-label="Previous article" disabled={activeIndex === 0} onClick={() => selectTab(activeIndex - 1)}><ChevronLeft aria-hidden="true" size={16} /></button>
-          <button type="button" aria-label="Next article" disabled={activeIndex === posts.length - 1} onClick={() => selectTab(activeIndex + 1)}><ChevronRight aria-hidden="true" size={16} /></button>
-        </div>
-      </div>}
+      <div className={styles.controls} role="group" aria-label="Writing actions">
+        <LiquidMetalButton label={open ? "Close folder" : "Open folder"} expanded={open} onClick={() => setOpen((value) => !value)} />
+        <LiquidMetalButton label="Medium" href={MEDIUM_PROFILE_URL} />
+      </div>
     </div>
   );
 }

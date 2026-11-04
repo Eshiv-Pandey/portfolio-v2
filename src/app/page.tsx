@@ -5,7 +5,6 @@ import { BlogList } from "@/components/BlogList";
 import { CommandMenu } from "@/components/command-menu";
 import { DashedRule, SectionHeading } from "@/components/desi/section";
 import { DesiDivider } from "@/components/desi/DesiDivider";
-import { JaaliFrame } from "@/components/desi/JaaliFrame";
 import { ExperienceList } from "@/components/ExperienceList";
 import { Footer } from "@/components/Footer";
 import { HeroBanner } from "@/components/HeroBanner";
@@ -15,7 +14,6 @@ import { OpenSourceContributions } from "@/components/OpenSourceContributions";
 import { ProjectsGrid } from "@/components/ProjectsGrid";
 import { Reveal } from "@/components/Reveal";
 import { RightNavbar } from "@/components/RightNavbar";
-import { TechStack } from "@/components/TechStack";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { SocialLinks } from "@/components/SocialLinks";
 import { HeroActions } from "@/components/HeroActions";
@@ -105,7 +103,7 @@ export default async function Home() {
         }}
       />
       <div
-        className="pointer-events-none absolute top-[calc(26vh+112px)] right-0 left-0 h-0 border-b border-black/30 dark:border-white/[0.15]"
+        className="pointer-events-none absolute top-[calc(26vh+144px)] right-0 left-0 h-0 border-b border-black/30 dark:border-white/[0.15]"
         style={{
           maskImage:
             "repeating-linear-gradient(to right, black 0, black 1px, transparent 1px, transparent 6px)",
@@ -117,8 +115,8 @@ export default async function Home() {
       {[
         { top: "26vh", left: "var(--gutter)" },
         { top: "26vh", right: "var(--gutter-r)" },
-        { top: "calc(26vh + 112px)", left: "var(--gutter)" },
-        { top: "calc(26vh + 112px)", right: "var(--gutter-r)" },
+        { top: "calc(26vh + 144px)", left: "var(--gutter)" },
+        { top: "calc(26vh + 144px)", right: "var(--gutter-r)" },
       ].map((pos, i) => (
         <div
           key={i}
@@ -137,28 +135,18 @@ export default async function Home() {
           22vh default so the oversized profile photo can straddle its edge. */}
       <HeroBanner height="26vh" />
 
-      {/* Cell 2: profile. The photo is deliberately taller than this 112px cell
-          and pulled upward, so its top half rises into the banner and its lower
-          half sits in the cell beside the name. */}
-      <div className="absolute top-[26vh] right-0 left-0 z-40 flex h-[112px] items-center px-4 md:right-(--gutter-r) md:left-(--gutter)">
+      {/* The photo card rises into the banner; its caption clears the lower guide. */}
+      <div className="absolute top-[26vh] right-0 left-0 z-40 flex h-[144px] items-center px-4 md:right-(--gutter-r) md:left-(--gutter)">
         <div className="flex w-full items-center justify-between">
           <div className="flex min-w-0 items-center gap-4 sm:gap-6">
-            <JaaliFrame
-              src="/images/pic1.jpeg"
-              alt={NAME}
-              preload
-              shape="square"
-              sizes="(min-width: 640px) 144px, 112px"
-              className="-mt-8 size-28 sm:-mt-10 sm:size-36"
-            >
-              <ProfileFlip
-                images={[
-                  { src: "/images/pic1.jpeg", alt: NAME },
-                  { src: "/images/pic2.jpeg", alt: NAME },
-                ]}
-                sizes="(min-width: 640px) 144px, 112px"
-              />
-            </JaaliFrame>
+            <ProfileFlip
+              images={[
+                { src: "/images/pic1.jpeg", alt: NAME },
+                { src: "/images/pic2.jpeg", alt: NAME },
+              ]}
+              sizes="(min-width: 640px) 142px, 106px"
+              className="-mt-8 w-[120px] sm:-mt-10 sm:w-[156px]"
+            />
 
             <div className="flex min-w-0 flex-col justify-center">
               <h1 className="mb-0.5 font-pixel text-[22px] leading-none font-bold text-zinc-800 [text-shadow:-1.5px_0_0_rgba(14,124,123,0.28),1.5px_0_0_rgba(233,162,8,0.38)] sm:text-[28px] dark:text-zinc-100 dark:[text-shadow:-1.5px_0_0_rgba(14,124,123,0.55),1.5px_0_0_rgba(233,162,8,0.6)]">
@@ -181,7 +169,7 @@ export default async function Home() {
       </div>
 
       {/* Flowing content */}
-      <div className="relative z-10 mr-0 ml-0 flex min-h-screen flex-col px-4 pt-[calc(26vh+112px)] pb-0 md:mr-(--gutter-r) md:ml-(--gutter)">
+      <div className="relative z-10 mr-0 ml-0 flex min-h-screen flex-col px-4 pt-[calc(26vh+144px)] pb-0 md:mr-(--gutter-r) md:ml-(--gutter)">
         <div className="grid gap-5 pt-1 min-[900px]:grid-cols-[minmax(0,1fr)_280px] min-[900px]:items-start">
         <Reveal delay={0.05}>
           <p className="mt-4 max-w-[68ch] text-[14px] leading-relaxed text-zinc-600 sm:text-[15px] dark:text-zinc-300">
@@ -249,21 +237,6 @@ export default async function Home() {
         </div>
 
         <DesiDivider pattern="jaali" height={26} reverse className="mt-2" />
-
-        {/* Skills */}
-        <section
-          id="skills"
-          className="relative z-10 mt-6 flex scroll-mt-24 flex-col"
-        >
-          <SectionHeading
-            title="Skills & Technologies"
-            devanagari="कौशल"
-            topRule
-          />
-          <Reveal className="relative">
-            <TechStack />
-          </Reveal>
-        </section>
 
         {/* Writing */}
         <section

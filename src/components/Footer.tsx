@@ -1,18 +1,18 @@
 import Link from "next/link";
 import { Mail, MapPin, Phone } from "lucide-react";
-import { FooterFavicon } from "@/components/FooterFavicon";
+import { NameSignature } from "@/components/NameSignature";
 import { SocialLinks } from "@/components/SocialLinks";
 
 import { MonumentSkyline } from "@/components/desi/MonumentSkyline";
 import { NebulaBackground } from "@/components/NebulaBackground";
 import { TruckRoad } from "@/components/TruckRoad";
-import { SECTIONS } from "@/lib/sections";
 import { SITE_NAME } from "@/lib/site";
+import styles from "./footer.module.css";
 
 /**
  * The page footer, built from `public/images/footer.png` (the DHARAA card): a
- * cream card on a terracotta board, opening with the animated favicon and wordmark,
- * a newsletter block and four link columns, closing on the monument skyline.
+ * cream card on a terracotta board, opening with the handwritten name,
+ * two essential link columns, closing on the monument skyline.
  *
  * It is deliberately compact and monochrome — the terracotta/cream palette of
  * the reference, with plain hairline rules rather than coloured dividers, so it
@@ -28,21 +28,10 @@ const PHONE = "+91 82796 28207";
 const PHONE_HREF = "tel:+918279628207";
 
 const PAGES = [
-  { name: "Home", href: "/" },
   { name: "Projects", href: "/projects" },
   { name: "Experience", href: "/experience" },
   { name: "Pull Requests", href: "/pull-requests" },
   { name: "Contact", href: "/contact" },
-];
-
-/** The repositories the open source work actually lives in. */
-const OPEN_SOURCE = [
-  { name: "Project-HAMi / HAMi", href: "https://github.com/Project-HAMi/HAMi" },
-  { name: "HAMi-core", href: "https://github.com/Project-HAMi/HAMi-core" },
-  {
-    name: "sugarlabs / musicblocks",
-    href: "https://github.com/sugarlabs/musicblocks",
-  },
 ];
 
 const INK = { color: "var(--fx-ink)" };
@@ -89,26 +78,19 @@ export function Footer() {
           className="absolute inset-0"
           style={{ backgroundColor: "color-mix(in srgb, var(--fx-card) 42%, transparent)" }}
         />
-        <div className="relative z-10 px-5 pt-6 pb-5 sm:px-7 sm:pt-7">
+        <div className={styles.content}>
           {/* Masthead — logo + wordmark. */}
-          <div className="flex flex-col gap-6">
+          <div className={styles.brand}>
             <div className="max-w-[42ch]">
-              <div className="flex items-center gap-2.5">
-                <FooterFavicon />
-                <span
-                  className="font-heading text-[21px] leading-none font-black tracking-[-0.03em]"
-                  style={INK}
-                >
-                  {SITE_NAME}
-                </span>
-              </div>
+              <Link href="/" aria-label="Eshiv Pandey home" className="flex w-fit items-center gap-2.5 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-(--fx-accent)">
+                <NameSignature animated={false} className="h-auto w-[280px] max-w-full text-(--fx-ink)" />
+                <span className="sr-only">{SITE_NAME}</span>
+              </Link>
             </div>
           </div>
 
-          <div className="mt-6 h-px" style={{ backgroundColor: "var(--fx-rule)" }} />
-
           {/* Link columns */}
-          <div className="mt-5 grid grid-cols-2 gap-x-6 gap-y-6 md:grid-cols-4 md:gap-x-8">
+          <div className={styles.columns}>
             <Column title="Quick Links">
               {PAGES.map((page) => (
                 <li key={page.href}>
@@ -119,38 +101,7 @@ export function Footer() {
               ))}
             </Column>
 
-            <Column title="On This Page">
-              {SECTIONS.map((section) => (
-                <li key={section.id}>
-                  <a href={`/#${section.id}`} className={LINK_CLASS} style={MUTED}>
-                    {section.name}
-                  </a>
-                </li>
-              ))}
-            </Column>
-
-            <Column title="Open Source">
-              {OPEN_SOURCE.map((repo) => (
-                <li key={repo.href}>
-                  <a
-                    href={repo.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={LINK_CLASS}
-                    style={MUTED}
-                  >
-                    {repo.name}
-                  </a>
-                </li>
-              ))}
-              <li>
-                <Link href="/pull-requests" className={LINK_CLASS} style={MUTED}>
-                  All pull requests
-                </Link>
-              </li>
-            </Column>
-
-            <div className="col-span-2 md:col-span-1">
+            <div>
               <Heading>Connect With Me</Heading>
               <ul className="mt-2 space-y-1.5">
                 <li>
@@ -160,7 +111,7 @@ export function Footer() {
                     style={MUTED}
                   >
                     <Mail className="mt-px size-3.5 shrink-0" />
-                    <span className="break-all">{EMAIL}</span>
+                    <span className="min-w-0 break-words">{EMAIL.split("@")[0]}<wbr />@{EMAIL.split("@")[1]}</span>
                   </a>
                 </li>
                 <li>
@@ -178,9 +129,8 @@ export function Footer() {
                   New Delhi, India
                 </li>
               </ul>
-
-              <SocialLinks className="mt-4 max-md:mx-auto" />
             </div>
+            <SocialLinks className={styles.socials} />
           </div>
         </div>
 

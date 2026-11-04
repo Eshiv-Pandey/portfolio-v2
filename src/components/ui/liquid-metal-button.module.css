@@ -1,0 +1,31 @@
+.button {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 999px;
+  background: #929296;
+  color: #f4f4f5;
+  font-family: var(--font-sans), sans-serif;
+  font-size: 13px;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: 0 2px 5px #0003, 0 9px 9px #0002, 0 20px 12px #0001;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+.metal { position: absolute; inset: 0; z-index: -2; overflow: hidden; border-radius: inherit; background: linear-gradient(120deg, #f4f4f5, #52525b 25%, #e4e4e7 44%, #71717a 62%, #fafafa 80%, #52525b); }
+.metal canvas { position: absolute; inset: 0; display: block; width: 100% !important; height: 100% !important; border-radius: inherit; }
+.surface { position: absolute; inset: 2px; z-index: -1; border-radius: inherit; background: linear-gradient(180deg, #202020, #000); }
+.label { position: relative; display: block; text-wrap: balance; }
+.button:hover { transform: translateY(-1px); box-shadow: 0 2px 5px #0003, 0 4px 4px #0002, 0 8px 5px #0001; }
+.button:active { transform: translateY(1px) scale(.98); box-shadow: 0 1px 2px #0003; }
+.button:focus-visible { outline: 2px solid var(--desi-teal); outline-offset: 4px; }
+@media (max-width: 480px) { .button { padding: 10px 6px; font-size: 12px; } }
+@media (prefers-reduced-motion: reduce) { .button { transition: none; } .button:hover, .button:active { transform: none; } }

@@ -29,7 +29,7 @@ interface TooltipState {
 
 interface ContributionGridProps {
   days: HeatmapDay[];
-  /** CSS variable prefix: `gh` reads marigold, `lc` reads teal. */
+  /** CSS variable prefix: `gh` reads activity-card green, `lc` reads teal. */
   ramp: Ramp;
   /** Singular/plural noun for the tooltip, e.g. "contribution". */
   unit: string;

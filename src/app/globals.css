@@ -147,12 +147,12 @@
   --desi-maroon: #b3202c;
   --desi-cream: #f7f0e2;
 
-  /* Heatmap ramps — GitHub reads marigold, LeetCode reads teal */
+  /* Heatmap ramps — GitHub matches its green activity card, LeetCode reads teal */
   --gh-0: #ebedf0;
-  --gh-1: #fae3ac;
-  --gh-2: #f5c65c;
-  --gh-3: #e9a208;
-  --gh-4: #a46c00;
+  --gh-1: #e4f5c8;
+  --gh-2: #c5f261;
+  --gh-3: #9cdc36;
+  --gh-4: #527c16;
 
   --lc-0: #ebedf0;
   --lc-1: #b3ddda;
@@ -171,10 +171,10 @@
   --desi-cream: #e8ddc6;
 
   --gh-0: #161b22;
-  --gh-1: #4a3708;
-  --gh-2: #8a6410;
-  --gh-3: #c98f14;
-  --gh-4: #f0b53a;
+  --gh-1: #26351a;
+  --gh-2: #527c16;
+  --gh-3: #9cdc36;
+  --gh-4: #c5f261;
 
   --lc-0: #161b22;
   --lc-1: #0b3a39;
@@ -571,208 +571,6 @@ body {
 }
 
 /* ------------------------------------------------------------------
-   Opening window page transition (see src/components/OpeningWindow.tsx)
-
-   Two doors, each half the viewport, meeting at the centre. Each one is
-   filled with the wall colour, carries the lace valance along its top
-   edge and half of the window at its seam edge, so together they
-   reassemble `opening_window.png`. They then swing towards the viewer on
-   their outer edges, like the shutters the artwork already shows open.
-
-   The window's mullion sits dead centre in the source (measured: its
-   bounding box centre is 1px off the artwork's), which is why the seam
-   can run straight down it — the wall appears to split along the window's
-   own joint rather than across it.
-
-   Every step here is a CSS animation rather than JS, for one reason: the
-   overlay ships inside the server-rendered HTML so that it covers the
-   page from the very first paint, before hydration. If opening it needed
-   JS, a slow hydration — or a JS error — would strand the visitor behind
-   a locked green wall. `forwards` on each animation means the doors open
-   and stay open no matter what JS does. The component's only jobs are to
-   unmount the overlay afterwards and to replay it on navigation.
-   ------------------------------------------------------------------ */
-
-.ow-shell {
-  /* Sampled from the artwork's wall, which is bit-exact across its whole
-     area — so this colour and the keyed-out crops join invisibly. */
-  --ow-wall: #5a934e;
-  --ow-valance-h: clamp(56px, 8.5vw, 136px);
-  /* Width-led on phones, height-led on desktops: the window neither
-     shrinks to a stamp on a 390px screen nor grows into the valance on a
-     short laptop. */
-  --ow-motif-w: min(72vw, 52vh, 620px);
-  /* From the 570x677 crop. A ratio, not a second clamp, so the two can't
-     drift apart. */
-  --ow-motif-h: calc(var(--ow-motif-w) * 677 / 570);
-  --ow-duration: 2.1s;
-
-  position: fixed;
-  inset: 0;
-  z-index: 200;
-  overflow: hidden;
-
-  /* Deep enough that a door sweeping towards the camera magnifies gently
-     instead of exploding: the free edge peaks at 50vw of depth, which at
-     1440px is a scale of about 1.4 against 2200px. A 1200px perspective
-     doubles it. */
-  perspective: 2200px;
-
-  animation: ow-shell var(--ow-duration) steps(1, end) forwards;
-}
-
-/* Held for the whole duration, then dropped — which also stops the
-   overlay swallowing clicks, so a failed JS unmount costs nothing. */
-@keyframes ow-shell {
-  from {
-    visibility: visible;
-  }
-  to {
-    visibility: hidden;
-  }
-}
-
-.ow-door {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 50%;
-  overflow: hidden;
-  background-color: var(--ow-wall);
-  backface-visibility: hidden;
-  will-change: transform, opacity;
-  animation:
-    ow-dissolve var(--ow-duration) linear forwards,
-    var(--ow-swing) var(--ow-duration) cubic-bezier(0.32, 0.72, 0, 1) forwards;
-}
-
-.ow-door-l {
-  left: 0;
-  transform-origin: left center;
-  --ow-swing: ow-swing-l;
-}
-
-.ow-door-r {
-  right: 0;
-  transform-origin: right center;
-  --ow-swing: ow-swing-r;
-}
-
-/* The hold before the swing is built into the keyframes rather than an
-   animation-delay, because the easing then runs across 26%→100% and the
-   closed state reads as deliberate instead of as a dropped frame. */
-@keyframes ow-swing-l {
-  0%,
-  26% {
-    transform: rotateY(0deg);
-  }
-  100% {
-    transform: rotateY(-96deg);
-  }
-}
-
-@keyframes ow-swing-r {
-  0%,
-  26% {
-    transform: rotateY(0deg);
-  }
-  100% {
-    transform: rotateY(96deg);
-  }
-}
-
-/* Opaque almost to the end: a door that faded while it swung would show
-   the page through it the whole way. This only softens the last moment,
-   where the door is edge-on anyway. */
-@keyframes ow-dissolve {
-  0%,
-  74% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
-}
-
-/* Lace along the top of each door. `right top` on the left door and
-   `left top` on the right one both put a tile boundary exactly on the
-   seam, so the pattern runs across the split unbroken. */
-.ow-valance {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: var(--ow-valance-h);
-  background-image: url("/images/window-valance.webp");
-  background-repeat: repeat-x;
-  background-size: auto 100%;
-}
-
-.ow-door-l .ow-valance {
-  background-position: right top;
-}
-
-.ow-door-r .ow-valance {
-  background-position: left top;
-}
-
-/* Half a window each, hung off the seam edge so the two halves meet. */
-.ow-motif {
-  position: absolute;
-  top: 56%;
-  width: var(--ow-motif-w);
-  height: var(--ow-motif-h);
-  margin-top: calc(var(--ow-motif-h) / -2);
-  background-image: url("/images/window-motif.webp");
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-}
-
-.ow-door-l .ow-motif {
-  right: calc(var(--ow-motif-w) / -2);
-}
-
-.ow-door-r .ow-motif {
-  left: calc(var(--ow-motif-w) / -2);
-}
-
-/* Light through the joint while the doors are shut. It also hides the
-   sub-pixel hairline where two 50% halves meet on an odd viewport width,
-   and is gone before either could separate. */
-.ow-seam {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  width: 2px;
-  margin-left: -1px;
-  background-color: var(--desi-marigold);
-  box-shadow: 0 0 14px 3px rgb(233 162 8 / 0.5);
-  animation: ow-seam var(--ow-duration) ease-out forwards;
-}
-
-@keyframes ow-seam {
-  0%,
-  11% {
-    opacity: 1;
-  }
-  24%,
-  100% {
-    opacity: 0;
-  }
-}
-
-/* A full-screen flash of marigold and bright green is a lot at night.
-   Dimmed with a pseudo-element rather than a `filter` on the door, which
-   would risk the browser flattening it out of the 3D context. */
-.dark .ow-door::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-color: rgb(3 7 18 / 0.34);
-}
-
-/* ------------------------------------------------------------------
    The single motion off-switch.
    Covers the CSS animations above, the pre-existing marquee, and the
    smooth-scroll. Framer Motion / GSAP components check the same media
@@ -810,17 +608,6 @@ body {
   /* A parked truck rather than one stuck mid-frame off-screen. */
   .smoke-puff {
     opacity: 0;
-  }
-
-  /* The page transition goes away entirely — a swinging full-screen wall is
-     exactly what this query is asking us not to do, and there is nothing
-     underneath it worth keeping. `display: none` rather than `animation:
-     none` because the latter would freeze the doors shut. It applies at
-     first paint, which is why this lives here and not in
-     use-reduced-motion.ts: that hook reports false during SSR by design,
-     so gating on it would flash the curtain before removing it. */
-  .ow-shell {
-    display: none !important;
   }
 
   *,

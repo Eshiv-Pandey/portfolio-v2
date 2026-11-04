@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Noto_Sans_Devanagari, Pixelify_Sans } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-import { OpeningWindow } from "@/components/OpeningWindow";
+import { NameIntro } from "@/components/NameIntro";
+import { InteractionSounds } from "@/components/InteractionSounds";
 import { CursorEffects } from "@/components/CursorEffects";
 import {
   SITE_DESCRIPTION,
@@ -71,7 +72,7 @@ export const metadata: Metadata = {
   // No `icons` key: favicon.ico / icon.png / apple-icon.png sit in this
   // directory, and Next emits the <link> tags from those file conventions.
   openGraph: {
-    title: TITLE,
+    title: `${TITLE} | Engineer & Open Source`,
     description: DESCRIPTION,
     url: SITE_URL,
     siteName: TITLE,
@@ -80,8 +81,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: TITLE,
+    title: `${TITLE} | Engineer & Open Source`,
     description: DESCRIPTION,
+    images: [{ url: "/opengraph-image.jpg?v=20261104", alt: "Eshiv Pandey, engineer and open source contributor", width: 1200, height: 630 }],
   },
 };
 
@@ -106,9 +108,10 @@ export default function RootLayout({
           {children}
         </ThemeProvider>
         <CursorEffects />
+        <InteractionSounds />
         {/* Last in the body so it paints over everything without needing to
             out-stack each component's own z-index one at a time. */}
-        <OpeningWindow />
+        <NameIntro />
         <Analytics />
         <SpeedInsights />
       </body>

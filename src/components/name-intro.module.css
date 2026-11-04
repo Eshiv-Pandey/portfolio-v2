@@ -1,0 +1,61 @@
+.shell {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  overflow: hidden;
+  pointer-events: auto;
+  animation: clear 4500ms steps(1, end) forwards;
+}
+
+.paper {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #27231d;
+  background: #f7f3eb;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  animation: peel 1000ms cubic-bezier(.76, 0, .24, 1) 3500ms forwards;
+}
+
+.signature { width: min(78vw, 620px); transform: translateY(-3vh) rotate(-3deg); }
+.name { display: block; width: 100%; overflow: visible; }
+.stroke {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.35;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: ink var(--stroke-duration, 500ms) ease-out var(--stroke-delay) forwards;
+}
+.fold {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #c7bfae, #ece5d7 65%, #fffdf7);
+  clip-path: polygon(100% 100%, 100% 100%, 100% 100%);
+  animation: fold 1000ms cubic-bezier(.76, 0, .24, 1) 3500ms forwards;
+}
+:global(.dark) .paper { background: #111310; color: #f3f0e8; }
+:global(.dark) .fold { background: linear-gradient(135deg, #080907, #34372f 65%, #52554c); }
+
+@keyframes ink {
+  to { stroke-dashoffset: 0; }
+}
+.staticStroke { stroke-dashoffset: 0; animation: none; }
+.skip { position: absolute; z-index: 1; left: 50%; bottom: 24px; transform: translateX(-50%); min-height: 44px; padding: 10px 16px; border: 1px solid #27231d66; border-radius: 8px; background: #f7f3eb; color: #27231d; font-size: 12px; cursor: pointer; }
+.skip:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+:global(.dark) .skip { background: #111310; color: #f3f0e8; border-color: #f3f0e866; }
+@keyframes clear { to { visibility: hidden; } }
+@keyframes peel {
+  0% { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
+  55% { clip-path: polygon(0 0, 100% 0, 100% 12%, 12% 100%, 0 100%); }
+  100% { clip-path: polygon(0 0, 0 0, 0 0, 0 0); }
+}
+@keyframes fold {
+  0% { clip-path: polygon(100% 100%, 100% 100%, 100% 100%); }
+  55% { clip-path: polygon(100% 12%, 12% 100%, 42% 42%); }
+  100% { clip-path: polygon(0 0, 0 0, 0 0); }
+}
+@media (prefers-reduced-motion: reduce) { .shell { display: none; } }

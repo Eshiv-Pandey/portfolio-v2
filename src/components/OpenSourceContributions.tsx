@@ -22,7 +22,7 @@ import type {
  * single unauthenticated GET and the filter tabs switch instantly.
  */
 
-const INITIAL_COUNT = 4;
+const INITIAL_COUNT = 2;
 
 /** Repo owner → logo. Rows against these orgs get the real mark next to the
  *  state dot; everything else keeps the dot alone. Keyed by the `owner`

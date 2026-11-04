@@ -16,7 +16,6 @@ import {
     CornerDownLeft,
     Copy,
     Briefcase,
-    BookOpen,
     Activity,
     Trophy,
     GitPullRequest,
@@ -41,7 +40,6 @@ const SECTION_ICONS: Record<string, React.ComponentType<{ className?: string }>>
     projects: Code,
     activity: Activity,
     opensource: GitPullRequest,
-    skills: BookOpen,
     writing: FileText,
     highlights: Trophy,
 }

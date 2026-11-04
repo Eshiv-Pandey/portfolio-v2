@@ -18,7 +18,6 @@ export const SECTIONS: SectionLink[] = [
   { id: "projects", name: "Projects", key: "P" },
   { id: "activity", name: "Activity", key: "A" },
   { id: "opensource", name: "Open Source", key: "O" },
-  { id: "skills", name: "Skills", key: "S" },
   { id: "writing", name: "Writing", key: "W" },
   { id: "highlights", name: "Highlights", key: "H" },
 ];
