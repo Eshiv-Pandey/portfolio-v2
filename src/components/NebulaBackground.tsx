@@ -12,8 +12,9 @@ import styles from "./nebula-background.module.css";
  * warm cream/marigold/teal/rose haze in light mode, a deeper glow on near-black
  * in dark mode, so the footer's own ink stays readable in both.
  *
- * Touch and small screens use a CSS haze to avoid mobile GPU context crashes.
- * Desktop rendering is bounded, pauses offscreen, and falls back to that haze
+ * Touch and small screens animate a shader snapshot to retain the clouds and
+ * stars without mobile GPU context crashes. Desktop rendering is bounded,
+ * pauses offscreen, and falls back to that same image
  * if WebGL fails. Reduced motion freezes either version.
  */
 

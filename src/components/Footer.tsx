@@ -141,10 +141,10 @@ export function Footer() {
             `absolute` collided and parked it below the skyline at zero height.
             The overlay takes the skyline's box; the truck fills it with
             `size-full`. */}
-        <div className="relative z-10">
+        <div className="relative z-10 pt-3 sm:pt-0">
           <MonumentSkyline />
           <div className="absolute inset-0">
-            <TruckRoad className="size-full" width="15%" duration="14s" />
+            <TruckRoad className="size-full" width="max(84px, 15%)" duration="14s" />
           </div>
         </div>
       </div>
