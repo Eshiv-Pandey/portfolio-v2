@@ -65,7 +65,6 @@
 .copy { display: grid; place-items: center; min-width: 44px; min-height: 44px; margin: -7px 0; border: 0; border-radius: 50%; background: transparent; color: var(--muted); cursor: pointer; }
 .copy:hover { color: var(--accent); }
 .compose { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; margin-top: 18px; transition: opacity 300ms ease; }
-.compose[data-ready="false"] { opacity: 0; visibility: hidden; pointer-events: none; }
 .slip {
   width: min(100%, 22rem);
   padding: 7px 16px 10px;

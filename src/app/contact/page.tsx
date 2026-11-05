@@ -25,9 +25,9 @@ export default function ContactPage() {
   const [formData, setFormData] = useState(EMPTY_NOTE);
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [sentNote, setSentNote] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "error">("idle");
   const submitting = useRef(false);
-  const [conversationReady, setConversationReady] = useState(false);
 
   useEffect(() => {
     if (copyStatus === "idle") return;
@@ -36,36 +36,49 @@ export default function ContactPage() {
   }, [copyStatus]);
 
   const isFormValid = Object.values(formData).every((value) => value.trim() !== "");
+  const emailDraftHref = `mailto:${EMAIL}?subject=${encodeURIComponent(`A note from ${formData.name.trim() || "a portfolio visitor"}`)}&body=${encodeURIComponent(`From: ${formData.name.trim()} <${formData.email.trim()}>\n\n${formData.message.trim()}`)}`;
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (submitting.current || !isFormValid) return;
     submitting.current = true;
+    setErrorMessage("");
     setStatus("sending");
     const form = event.currentTarget;
     const data = new FormData(form);
+    const note = {
+      name: formData.name.trim(),
+      email: formData.email.trim(),
+      message: formData.message.trim(),
+      _honey: String(data.get("_honey") || ""),
+    };
     const controller = new AbortController();
     const timeout = window.setTimeout(() => controller.abort(), 20000);
 
     try {
-      const response = await fetch(`https://formsubmit.co/ajax/${EMAIL}`, {
+      const response = await fetch("/api/contact", {
         method: "POST",
-        headers: { Accept: "application/json" },
-        body: data,
+        headers: { Accept: "application/json", "Content-Type": "application/json" },
+        body: JSON.stringify(note),
         signal: controller.signal,
       });
       const result = await response.json();
       if (!response.ok || (result?.success !== true && result?.success !== "true")) {
-        throw new Error("The note was not accepted.");
+        setStatus("error");
+        setErrorMessage(typeof result?.error === "string" ? result.error : "Your note could not be sent right now. Please try again.");
+        return;
       }
-      setSentNote(formData.message.trim());
+      setSentNote(note.message);
       form.reset();
       setFormData(EMPTY_NOTE);
       setStatus("sent");
       playMessagePop();
-    } catch {
+    } catch (error) {
       // Retain the note and sender details so a retry never loses their work.
       setStatus("error");
+      setErrorMessage(error instanceof Error && error.name === "AbortError"
+        ? "Sending your note took too long. Please try again."
+        : "Your note could not be sent right now. Please try again.");
     } finally {
       window.clearTimeout(timeout);
       submitting.current = false;
@@ -101,7 +114,7 @@ export default function ContactPage() {
           <div className={styles.holes} aria-hidden="true">
             {Array.from({ length: 9 }, (_, index) => <span key={index} />)}
           </div>
-          <ContactMessages email={EMAIL} copyStatus={copyStatus} onCopy={copyEmail} onComplete={setConversationReady} />
+          <ContactMessages email={EMAIL} copyStatus={copyStatus} onCopy={copyEmail} />
           {sentNote && <div className={styles.mine}><p className={styles.sentBubble}>{sentNote}</p></div>}
 
           {status === "sent" ? (
@@ -110,10 +123,7 @@ export default function ContactPage() {
               <button type="button" className={styles.another} onClick={() => { setSentNote(""); setStatus("idle"); }}>Write another note</button>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className={styles.compose} aria-busy={status === "sending"} data-ready={conversationReady} inert={!conversationReady} aria-hidden={!conversationReady}>
-              <input type="hidden" name="_captcha" value="false" />
-              <input type="hidden" name="_template" value="table" />
-              <input type="hidden" name="_subject" value="New Submission from Portfolio" />
+            <form onSubmit={handleSubmit} className={styles.compose} aria-busy={status === "sending"}>
               <input type="text" name="_honey" className={styles.trap} tabIndex={-1} autoComplete="off" aria-hidden="true" />
               <div className={styles.slip} data-sending={status === "sending" || undefined}>
                 <label htmlFor="contact-message" className="sr-only">Your note to Eshiv</label>
@@ -137,7 +147,7 @@ export default function ContactPage() {
                 {status === "sending" ? <>Sending note <LoaderCircle size={16} className={styles.spinner} aria-hidden="true" /></> : <>Send note <Send size={16} aria-hidden="true" /></>}
               </button>
               {status === "sending" && <p className="sr-only" role="status">Sending your note.</p>}
-              {status === "error" && <p className={styles.error} role="alert">Couldn&apos;t send. Retry, or <a href={`mailto:${EMAIL}`}>email me.</a></p>}
+              {status === "error" && <p className={styles.error} role="alert">{errorMessage} <a href={emailDraftHref}>Open an email draft</a>.</p>}
             </form>
           )}
         </section>

@@ -12,7 +12,7 @@ interface ContactMessagesProps {
   email: string;
   copyStatus: "idle" | "copied" | "error";
   onCopy: () => void;
-  onComplete: (ready: boolean) => void;
+  onComplete?: (ready: boolean) => void;
 }
 
 export function ContactMessages({ email, copyStatus, onCopy, onComplete }: ContactMessagesProps) {
@@ -37,14 +37,14 @@ export function ContactMessages({ email, copyStatus, onCopy, onComplete }: Conta
         setVisible(count);
         playMessagePop();
         if (count < 3) timer = window.setTimeout(next, 350);
-        else onComplete(true);
+        else onComplete?.(true);
       }, 750);
     };
     const start = () => {
       if (started) return;
       started = true;
       timer = window.setTimeout(() => {
-        if (reduced) { setVisible(3); onComplete(true); }
+        if (reduced) { setVisible(3); onComplete?.(true); }
         else next();
       }, reduced ? 0 : 200);
     };
