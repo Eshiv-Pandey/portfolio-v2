@@ -37,24 +37,28 @@ export async function POST(request: Request) {
     return failure("Please enter a valid email address so I can reply.", 400);
   }
 
+  const apiKey = process.env.RESEND_API_KEY?.trim();
+  const from = process.env.CONTACT_FROM_EMAIL?.trim();
+  const to = process.env.CONTACT_TO_EMAIL?.trim() || RECIPIENT;
+  if (!apiKey || !from) {
+    return failure("This form is temporarily unavailable.", 503);
+  }
+
   try {
-    const response = await fetch(`https://formsubmit.co/ajax/${RECIPIENT}`, {
+    const response = await fetch("https://api.resend.com/emails", {
       method: "POST",
-      headers: { Accept: "application/json", "Content-Type": "application/json" },
+      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
-        name,
-        email,
-        message,
-        _replyto: email,
-        _subject: "New Submission from Portfolio",
-        _template: "table",
-        _captcha: "false",
-        _url: `${SITE_URL}/contact`,
+        from,
+        to: [to],
+        reply_to: email,
+        subject: "New Submission from Portfolio",
+        text: `Name: ${name}\nEmail: ${email}\nSent from: ${SITE_URL}/contact\n\n${message}`,
       }),
-      signal: AbortSignal.timeout(15000),
+      signal: AbortSignal.timeout(12000),
     });
     const result = await response.json().catch(() => null);
-    if (!response.ok || (result?.success !== true && result?.success !== "true")) {
+    if (!response.ok || typeof result?.id !== "string" || !result.id) {
       if (response.status === 429) {
         return failure("Too many notes right now. Please try again in a few minutes.", 429);
       }
