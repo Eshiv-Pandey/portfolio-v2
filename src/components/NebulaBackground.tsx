@@ -12,10 +12,10 @@ import styles from "./nebula-background.module.css";
  * warm cream/marigold/teal/rose haze in light mode, a deeper glow on near-black
  * in dark mode, so the footer's own ink stays readable in both.
  *
- * Touch and small screens animate a shader snapshot to retain the clouds and
- * stars without mobile GPU context crashes. Desktop rendering is bounded,
- * pauses offscreen, and falls back to that same image
- * if WebGL fails. Reduced motion freezes either version.
+ * Phones use the same live sky with fewer noise layers, a smaller drawing
+ * buffer, and a lower frame rate. Their offscreen contexts are released.
+ * A drifting shader snapshot takes over if WebGL fails. Reduced motion
+ * freezes either version. Footer tint is applied beneath the stars.
  */
 
 const FRAG = /* glsl */ `
@@ -23,6 +23,9 @@ const FRAG = /* glsl */ `
   uniform vec2 uResolution;
   uniform float uTime;
   uniform float uDark;
+  uniform float uOctaves;
+  uniform float uScale;
+  uniform float uVeil;
 
   float hash(vec2 p){ p = fract(p * vec2(123.34, 456.21)); p += dot(p, p + 45.32); return fract(p.x * p.y); }
   float noise(vec2 p){
@@ -34,8 +37,11 @@ const FRAG = /* glsl */ `
   }
   float fbm(vec2 p){
     float v = 0.0, a = 0.5;
-    for (int i = 0; i < 5; i++){ v += a * noise(p); p *= 2.0; a *= 0.5; }
-    return v;
+    for (int i = 0; i < 5; i++){
+      if (float(i) >= uOctaves) break;
+      v += a * noise(p); p *= 2.0; a *= 0.5;
+    }
+    return v * (0.96875 / (1.0 - pow(0.5, uOctaves)));
   }
 
   void main(){
@@ -64,8 +70,24 @@ const FRAG = /* glsl */ `
     col = mix(col, teal, smoothstep(0.50, 1.0, n2) * w * 0.7);
     col = mix(col, rose, smoothstep(0.55, 0.96, n1) * w * 0.65);
 
-    float star = pow(hash(floor(gl_FragCoord.xy * 0.5)), 42.0);
-    col += star * mix(0.18, 0.55, uDark);
+    // Tint the clouds first. The stars retain their own light above the veil.
+    col = mix(col, base, uVeil);
+    // Sparse, softly glowing points measured in CSS pixels, so lowering the
+    // phone drawing buffer does not turn the stars into chunky noise.
+    vec2 sky = gl_FragCoord.xy / uScale;
+    vec2 cell = floor(sky / 32.0);
+    float seed = hash(cell + 19.7);
+    vec2 center = vec2(hash(cell + 3.1), hash(cell + 8.3)) * 24.0 + 4.0;
+    vec2 delta = mod(sky, 32.0) - center;
+    float radius = mix(0.7, 1.5, hash(cell + 41.2));
+    float d2 = dot(delta, delta) / (radius * radius);
+    float twinkle = 0.76 + 0.24 * sin(uTime * 1.7 + seed * 31.0);
+    float strength = step(0.62, seed) * twinkle;
+    float core = exp(-d2 * 1.5) * strength;
+    float halo = exp(-d2 * 0.22) * 0.16 * strength;
+    vec3 glow = mix(vec3(0.75, 0.58, 0.30), vec3(1.0, 0.96, 0.86), uDark);
+    col = mix(col, glow, halo);
+    col = mix(col, vec3(1.0, 0.98, 0.92), min(core * 1.4, 1.0));
 
     gl_FragColor = vec4(col, 1.0);
   }
@@ -75,7 +97,7 @@ const VERT = /* glsl */ `
   void main(){ gl_Position = vec4(position, 1.0); }
 `;
 
-export function NebulaBackground() {
+export function NebulaBackground({ variant = "banner" }: { variant?: "banner" | "footer" } = {}) {
   const hostRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -97,7 +119,7 @@ export function NebulaBackground() {
     let geometry: Three.PlaneGeometry | undefined;
     let material: Three.ShaderMaterial | undefined;
     const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const simple = window.matchMedia("(max-width: 767px), (pointer: coarse)");
+    const mobile = window.matchMedia("(max-width: 767px), (pointer: coarse)");
 
     const stop = () => { cancelAnimationFrame(raf); raf = 0; };
     const setState = (state: "css" | "webgl" | "paused" | "fallback") => {
@@ -137,8 +159,7 @@ export function NebulaBackground() {
       if (disposed || !visible || document.hidden || motion.matches || !renderer) return;
       elapsed += Math.min(now - lastFrame, 100) / 1000;
       lastFrame = now;
-      // The soft haze needs only 30 painted frames per second.
-      if (now - lastPaint >= 1000 / 30) {
+      if (now - lastPaint >= 1000 / (mobile.matches ? 20 : 30)) {
         lastPaint = now;
         if (!paint()) return;
       }
@@ -149,18 +170,20 @@ export function NebulaBackground() {
       const w = host.clientWidth, h = host.clientHeight;
       if (!w || !h) return;
       // Bound the actual drawing buffer, including on high-DPI screens.
-      const scale = Math.min(1, Math.sqrt(300000 / (w * h)));
+      const scale = Math.min(1, Math.sqrt((mobile.matches ? 96000 : 300000) / (w * h)));
       const width = Math.max(1, Math.floor(w * scale));
       const height = Math.max(1, Math.floor(h * scale));
       if (canvas.width !== width || canvas.height !== height) renderer.setSize(width, height, false);
       material.uniforms.uResolution.value.set(canvas.width, canvas.height);
+      material.uniforms.uScale.value = canvas.width / w;
+      material.uniforms.uOctaves.value = mobile.matches ? 3 : 5;
     };
     const initialize = async () => {
-      if (disposed || initializing || failed || simple.matches || renderer) return;
+      if (disposed || initializing || failed || renderer) return;
       initializing = true;
       try {
         const THREE = await import("three");
-        if (disposed || simple.matches || !visible || document.hidden) return;
+        if (disposed || !visible || document.hidden || (mobile.matches && motion.matches)) return;
         canvas = document.createElement("canvas");
         canvas.className = styles.canvas;
         canvas.addEventListener("webglcontextlost", lost);
@@ -173,6 +196,9 @@ export function NebulaBackground() {
           uResolution: { value: new THREE.Vector2(1, 1) },
           uTime: { value: elapsed },
           uDark: { value: document.documentElement.classList.contains("dark") ? 1 : 0 },
+          uOctaves: { value: mobile.matches ? 3 : 5 },
+          uScale: { value: 1 },
+          uVeil: { value: variant === "footer" ? 0.42 : 0 },
         } });
         scene.add(new THREE.Mesh(geometry, material));
         size();
@@ -184,7 +210,9 @@ export function NebulaBackground() {
     function sync() {
       stop();
       if (disposed || !host) return;
-      if (simple.matches) { release(); setState("css"); return; }
+      if (mobile.matches && (!visible || document.hidden || motion.matches)) {
+        release(); setState("css"); return;
+      }
       if (failed) { setState("fallback"); return; }
       if (!visible || document.hidden || !host.clientWidth || !host.clientHeight) { setState(renderer ? "paused" : "css"); return; }
       if (!renderer) { void initialize(); return; }
@@ -203,7 +231,7 @@ export function NebulaBackground() {
     themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
     document.addEventListener("visibilitychange", sync);
     motion.addEventListener("change", sync);
-    simple.addEventListener("change", sync);
+    mobile.addEventListener("change", resize);
 
     return () => {
       disposed = true;
@@ -212,10 +240,10 @@ export function NebulaBackground() {
       themeObserver.disconnect();
       document.removeEventListener("visibilitychange", sync);
       motion.removeEventListener("change", sync);
-      simple.removeEventListener("change", sync);
+      mobile.removeEventListener("change", resize);
       release();
     };
-  }, []);
+  }, [variant]);
 
-  return <div ref={hostRef} data-nebula data-nebula-state="css" aria-hidden="true" className={styles.background} />;
+  return <div ref={hostRef} data-nebula data-nebula-state="css" aria-hidden="true" className={`${styles.background} ${variant === "footer" ? styles.footer : ""}`} />;
 }

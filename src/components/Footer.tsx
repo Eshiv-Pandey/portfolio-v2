@@ -69,15 +69,9 @@ export function Footer() {
       }}
     >
       <div className="relative overflow-hidden rounded-[14px]" style={{ backgroundColor: "var(--fx-card)" }}>
-        {/* Animated nebula standing in for the flat board colour, with a veil
-            of the card tone over it so the ink keeps its contrast. Both layers
-            sit behind the content (`relative z-10`). */}
-        <NebulaBackground />
-        <div
-          aria-hidden="true"
-          className="absolute inset-0"
-          style={{ backgroundColor: "color-mix(in srgb, var(--fx-card) 42%, transparent)" }}
-        />
+        {/* The nebula tints its clouds beneath the stars, keeping the ink
+            readable without dimming the sky's points of light. */}
+        <NebulaBackground variant="footer" />
         <div className={styles.content}>
           {/* Masthead — logo + wordmark. */}
           <div className={styles.brand}>

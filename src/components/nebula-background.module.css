@@ -8,18 +8,23 @@
 .background::before {
   content: "";
   position: absolute;
-  inset: -4%;
-  /* A frame of the desktop shader retains its clouds and stars on phones
-     without allocating a WebGL context. The canvas covers this on desktop. */
+  inset: -14%;
+  /* The live canvas covers this fallback. The footer snapshot already has
+     its cloud tint baked in beneath the stars, just like the live shader. */
   background: url("/images/nebula-light.webp") center / cover no-repeat;
-  animation: haze 36s ease-in-out infinite alternate;
+  animation: haze 24s ease-in-out -8s infinite alternate;
   animation-play-state: paused;
 }
 :global(.dark) .background { background: #150f0d; }
 :global(.dark) .background::before {
   background-image: url("/images/nebula-dark.webp");
 }
+.footer::before { background-image: url("/images/nebula-light-footer.webp"); }
+:global(.dark) .footer::before { background-image: url("/images/nebula-dark-footer.webp"); }
 .background[data-nebula-running]::before { animation-play-state: running; }
 .canvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
-@keyframes haze { to { transform: translate(2%, -2%) scale(1.04); } }
+@keyframes haze {
+  from { transform: translate(-4%, 3%) scale(1.02); }
+  to { transform: translate(4%, -3%) scale(1.12); }
+}
 @media (prefers-reduced-motion: reduce) { .background::before { animation: none; } }
