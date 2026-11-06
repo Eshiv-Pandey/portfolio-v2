@@ -42,6 +42,7 @@ Each note keeps the same idempotency key when retried without edits, preventing
 duplicate emails after an uncertain response. The API retries a transient
 provider failure once within an eight-second timeout.
 
-Contact messages use an original synthesized two-note chime. The sound control
+Contact messages use the supplied Mixkit software interface WAV, preloaded
+from `/sounds/mixkit-software-interface-start-2574.wav`. The sound control
 remembers the visitor's preference. Browsers require a click, tap, or key press
 before audio can play; muted messages and hidden tabs stay silent.

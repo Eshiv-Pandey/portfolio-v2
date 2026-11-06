@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Check, Copy } from "lucide-react";
 import { INTRO_FINISHED_EVENT } from "@/lib/intro";
-import { playMessagePop, unlockMessageAudio } from "@/lib/contact-sound";
+import { playMessagePop, prepareMessageSound, unlockMessageAudio } from "@/lib/contact-sound";
 import styles from "@/app/contact/contact.module.css";
 
 interface ContactMessagesProps {
@@ -23,6 +23,7 @@ export function ContactMessages({ email, copyStatus, onCopy, onComplete }: Conta
     let count = 0;
     let started = false;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    void prepareMessageSound();
     const next = () => {
       setTyping(true);
       timer = window.setTimeout(() => {

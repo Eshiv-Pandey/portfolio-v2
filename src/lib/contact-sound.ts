@@ -1,8 +1,11 @@
-import { getAudioContext } from "@/lib/sound-engine";
+import { decodeAudioData, getAudioContext } from "@/lib/sound-engine";
+
+export const MESSAGE_SOUND = "/sounds/mixkit-software-interface-start-2574.wav";
 
 const PREFERENCE_KEY = "portfolio:message-sound";
 const PREFERENCE_EVENT = "portfolio:message-sound-change";
-const activeTones = new Set<OscillatorNode>();
+let activeMessage: AudioBufferSourceNode | null = null;
+let playbackVersion = 0;
 let soundEnabled = true;
 
 export function isMessageSoundEnabled() {
@@ -28,51 +31,47 @@ export function setMessageSoundEnabled(enabled: boolean) {
   soundEnabled = enabled;
   try { window.localStorage.setItem(PREFERENCE_KEY, enabled ? "on" : "off"); } catch { /* Keep the session preference. */ }
   if (!enabled) {
-    for (const tone of activeTones) {
-      try { tone.stop(); } catch { /* Already ended. */ }
-    }
-    activeTones.clear();
+    playbackVersion += 1;
+    try { activeMessage?.stop(); } catch { /* Already ended. */ }
+    activeMessage = null;
   }
   window.dispatchEvent(new Event(PREFERENCE_EVENT));
 }
 
 export async function unlockMessageAudio() {
   if (typeof window === "undefined" || !isMessageSoundEnabled()) return;
-  try { await getAudioContext().resume(); } catch { /* Audio is optional. */ }
+  try { await Promise.all([getAudioContext().resume(), decodeAudioData(MESSAGE_SOUND)]); } catch { /* Audio is optional. */ }
 }
 
-export function playMessagePop() {
+export async function prepareMessageSound() {
+  if (typeof window === "undefined") return;
+  try { await decodeAudioData(MESSAGE_SOUND); } catch { /* Audio is optional. */ }
+}
+
+export async function playMessagePop() {
   if (typeof window === "undefined" || !isMessageSoundEnabled() || document.hidden) return;
   try {
     const context = getAudioContext();
     if (context.state !== "running") return;
+    const version = ++playbackVersion;
+    const buffer = await decodeAudioData(MESSAGE_SOUND);
+    if (version !== playbackVersion || !isMessageSoundEnabled() || document.hidden || context.state !== "running") return;
 
-    // Original, short two-note chime. Synthesis avoids an audio download and
-    // starts in sync with the bubble instead of waiting for an MP3 to decode.
-    const start = context.currentTime + 0.005;
-    for (const [frequency, offset] of [[880, 0], [1320, 0.11]]) {
-      for (const [harmonic, volume] of [[1, 0.12], [2, 0.018]]) {
-        const tone = context.createOscillator();
-        const gain = context.createGain();
-        const at = start + offset;
-        tone.type = "sine";
-        tone.frequency.setValueAtTime(frequency * harmonic * 1.08, at);
-        tone.frequency.exponentialRampToValueAtTime(frequency * harmonic, at + 0.06);
-        gain.gain.setValueAtTime(0.0001, at);
-        gain.gain.exponentialRampToValueAtTime(volume, at + 0.008);
-        gain.gain.exponentialRampToValueAtTime(0.0001, at + 0.18);
-        tone.connect(gain);
-        gain.connect(context.destination);
-        tone.onended = () => {
-          tone.disconnect();
-          gain.disconnect();
-          activeTones.delete(tone);
-        };
-        activeTones.add(tone);
-        tone.start(at);
-        tone.stop(at + 0.19);
-      }
-    }
+    // Only the latest message plays, including when loading a sound slowly.
+    try { activeMessage?.stop(); } catch { /* Already ended. */ }
+    const source = context.createBufferSource();
+    const gain = context.createGain();
+    source.buffer = buffer;
+    gain.gain.value = 0.3;
+    source.connect(gain);
+    gain.connect(context.destination);
+    source.onended = () => {
+      source.disconnect();
+      gain.disconnect();
+      if (activeMessage === source) activeMessage = null;
+    };
+    activeMessage = source;
+    source.start(0);
   } catch {
     // The conversation still works when audio isn't available.
   }
