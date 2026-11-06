@@ -7,6 +7,7 @@ import type { FormEvent } from "react";
 import { ArrowLeft, ArrowUpRight, LoaderCircle, Mail, Phone, Send } from "lucide-react";
 import { CommandMenu } from "@/components/command-menu";
 import { ContactMessages } from "@/components/ContactMessages";
+import { ContactSoundToggle } from "@/components/ContactSoundToggle";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { SOCIALS } from "@/lib/socials";
 import { playMessagePop } from "@/lib/contact-sound";
@@ -28,6 +29,7 @@ export default function ContactPage() {
   const [errorMessage, setErrorMessage] = useState("");
   const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "error">("idle");
   const submitting = useRef(false);
+  const submission = useRef<{ signature: string; id: string } | null>(null);
 
   useEffect(() => {
     if (copyStatus === "idle") return;
@@ -52,6 +54,10 @@ export default function ContactPage() {
       message: formData.message.trim(),
       _honey: String(data.get("_honey") || ""),
     };
+    const signature = JSON.stringify(note);
+    if (submission.current?.signature !== signature) {
+      submission.current = { signature, id: crypto.randomUUID() };
+    }
     const controller = new AbortController();
     const timeout = window.setTimeout(() => controller.abort(), 20000);
 
@@ -59,7 +65,7 @@ export default function ContactPage() {
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: { Accept: "application/json", "Content-Type": "application/json" },
-        body: JSON.stringify(note),
+        body: JSON.stringify({ ...note, submissionId: submission.current.id }),
         signal: controller.signal,
       });
       const result = await response.json();
@@ -71,6 +77,7 @@ export default function ContactPage() {
       setSentNote(note.message);
       form.reset();
       setFormData(EMPTY_NOTE);
+      submission.current = null;
       setStatus("sent");
       playMessagePop();
     } catch (error) {
@@ -103,6 +110,7 @@ export default function ContactPage() {
             Back home
           </Link>
           <div className={styles.controls}>
+            <ContactSoundToggle />
             <CommandMenu />
             <ThemeToggle />
           </div>

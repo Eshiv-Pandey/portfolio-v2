@@ -16,7 +16,7 @@ export function InteractionSounds() {
       if (event.button !== 0) return;
       const target = event.target instanceof Element ? event.target : null;
       // Theme controls play their own distinct sound, once per activation.
-      if (target?.closest('[data-sound="theme"]')) return;
+      if (target?.closest('[data-sound="theme"], [data-sound="contact"]')) return;
       void playSound(CLICK_SOUND, { volume: 0.3, interrupt: true }).catch(() => undefined);
     };
 

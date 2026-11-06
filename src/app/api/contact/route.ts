@@ -1,4 +1,6 @@
 import { SITE_URL } from "@/lib/site";
+import { randomUUID } from "node:crypto";
+import { setTimeout as delay } from "node:timers/promises";
 
 const RECIPIENT = "eshivpandey18@gmail.com";
 const MAX_BODY_LENGTH = 12288;
@@ -36,6 +38,9 @@ export async function POST(request: Request) {
   if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return failure("Please enter a valid email address so I can reply.", 400);
   }
+  if (input.submissionId !== undefined && (typeof input.submissionId !== "string" || !/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(input.submissionId))) {
+    return failure("Please refresh the page and try sending your note again.", 400);
+  }
 
   const apiKey = process.env.RESEND_API_KEY?.trim();
   const from = process.env.CONTACT_FROM_EMAIL?.trim();
@@ -45,26 +50,39 @@ export async function POST(request: Request) {
   }
 
   try {
-    const response = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        from,
-        to: [to],
-        reply_to: email,
-        subject: "New Submission from Portfolio",
-        text: `Name: ${name}\nEmail: ${email}\nSent from: ${SITE_URL}/contact\n\n${message}`,
-      }),
-      signal: AbortSignal.timeout(12000),
+    const signal = AbortSignal.timeout(8000);
+    const idempotencyKey = `contact-note/${input.submissionId || randomUUID()}`;
+    const body = JSON.stringify({
+      from,
+      to: [to],
+      reply_to: email,
+      subject: "New Submission from Portfolio",
+      text: `Name: ${name}\nEmail: ${email}\nSent from: ${SITE_URL}/contact\n\n${message}`,
     });
-    const result = await response.json().catch(() => null);
-    if (!response.ok || typeof result?.id !== "string" || !result.id) {
-      if (response.status === 429) {
-        return failure("Too many notes right now. Please try again in a few minutes.", 429);
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const response = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+          "Idempotency-Key": idempotencyKey,
+        },
+        body,
+        signal,
+      });
+      const result = await response.json().catch(() => null);
+      if (response.ok && typeof result?.id === "string" && result.id) {
+        return Response.json({ success: true });
       }
-      return failure("Your note could not be sent right now. Please try again.", 502);
+      if (attempt === 0 && (response.status === 429 || response.status >= 500)) {
+        await delay(1000, undefined, { signal });
+        continue;
+      }
+      if (response.status === 429) return failure("Too many notes right now. Please try again in a few minutes.", 429);
+      if (response.status === 401 || response.status === 403) return failure("This form is temporarily unavailable.", 503);
+      break;
     }
-    return Response.json({ success: true });
+    return failure("Your note could not be sent right now. Please try again.", 502);
   } catch (error) {
     if (error instanceof Error && (error.name === "TimeoutError" || error.name === "AbortError")) {
       return failure("Sending your note took too long. Please try again.", 504);

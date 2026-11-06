@@ -4,8 +4,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Check, Copy } from "lucide-react";
 import { INTRO_FINISHED_EVENT } from "@/lib/intro";
-import { MESSAGE_SOUND, playMessagePop } from "@/lib/contact-sound";
-import { decodeAudioData, getAudioContext } from "@/lib/sound-engine";
+import { playMessagePop, unlockMessageAudio } from "@/lib/contact-sound";
 import styles from "@/app/contact/contact.module.css";
 
 interface ContactMessagesProps {
@@ -24,11 +23,6 @@ export function ContactMessages({ email, copyStatus, onCopy, onComplete }: Conta
     let count = 0;
     let started = false;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    void decodeAudioData(MESSAGE_SOUND).catch(() => undefined);
-
-    const primeAudio = () => {
-      try { void getAudioContext().resume().catch(() => undefined); } catch { /* Audio is optional. */ }
-    };
     const next = () => {
       setTyping(true);
       timer = window.setTimeout(() => {
@@ -50,15 +44,15 @@ export function ContactMessages({ email, copyStatus, onCopy, onComplete }: Conta
     };
 
     window.addEventListener(INTRO_FINISHED_EVENT, start);
-    document.addEventListener("pointerdown", primeAudio, { once: true });
-    document.addEventListener("keydown", primeAudio, { once: true });
+    document.addEventListener("pointerdown", unlockMessageAudio);
+    document.addEventListener("keydown", unlockMessageAudio);
     if (!document.querySelector("[data-name-intro]")) start();
 
     return () => {
       window.clearTimeout(timer);
       window.removeEventListener(INTRO_FINISHED_EVENT, start);
-      document.removeEventListener("pointerdown", primeAudio);
-      document.removeEventListener("keydown", primeAudio);
+      document.removeEventListener("pointerdown", unlockMessageAudio);
+      document.removeEventListener("keydown", unlockMessageAudio);
     };
   }, [onComplete]);
 
